@@ -1,3 +1,82 @@
-<div class="w-full surface-card py-8 px-5 sm:px-8" style="border-radius: 53px">
-  <h1>Hola Mundo</h1>
+<div class="w-full surface-card py-5 px-5 container " style="border-radius: 53px;">
+  <h2 class="text-900 text-3xl font-medium text-center mb-5">Comienza a comprar hoy!</h2>
+
+  <form [formGroup]="registerForm" (submit)="onSubmit()">
+    <div class="formgrid grid md:gap-1 lg:justify-content-center">
+      <!-- Nombre -->
+      <div class="field col-12 md:col-6 max-w-30rem">
+        <label for="name" class="block text-900 text-xl font-medium mb-2">Nombre</label>
+        <input id="name" formControlName="first_name" type="text" placeholder="Name" pInputText class="w-full md:w-30rem mb-5"
+          style="padding: 1rem" />
+      </div>
+
+      <!-- Apellido -->
+      <div class="field col-12 md:col-6 max-w-30rem">
+        <label for="lastname" class="block text-900 text-xl font-medium mb-2">Apellido</label>
+        <input id="lastname" formControlName="last_name" type="text" placeholder="Lastname" pInputText class="w-full md:w-30rem mb-5"
+          style="padding: 1rem" />
+      </div>
+
+      <!-- Usuario -->
+      <div class="field col-12 md:col-6 max-w-30rem">
+        <label for="username" class="block text-900 text-xl font-medium mb-2">Usuario</label>
+        <input id="username" formControlName="username" type="text" placeholder="Username" pInputText class="w-full md:w-30rem mb-5"
+          style="padding: 1rem" />
+      </div>
+
+      <!-- Correo -->
+      <div class="field col-12 md:col-6 max-w-30rem">
+        <label for="email1" class="block text-900 text-xl font-medium mb-2">Correo</label>
+        <input id="email1" formControlName="email" type="text" placeholder="Email address" pInputText class="w-full md:w-30rem mb-5"
+          style="padding: 1rem" />
+      </div>
+
+      <!-- Contraseña -->
+      <div class="field col-12 md:col-6 max-w-30rem">
+        <label for="password1" class="block text-900 font-medium text-xl mb-2">Contraseña</label>
+        <p-password id="password1" formControlName="password" placeholder="Password" [toggleMask]="true" styleClass="mb-5"
+          inputStyleClass="w-full p-3 md:w-30rem"></p-password>
+      </div>
+
+      <!-- Titulo separador para direccion -->
+      <div class="lg:text-center col-12">
+        <h4 class="text-900 text-2xl font-medium mb-2">Dirección de envío</h4>
+      </div>
+
+      <!-- Departamento (dropdown) -->
+      <div class="field col-12 md:col-6 max-w-30rem">
+        <label for="department" class="block text-900 text-xl font-medium mb-2">Departamento</label>
+        <p-dropdown id="department" formControlName="state" [options]="statesOptions" placeholder="Selecciona un departamento" pInputText
+          class="w-full md:w-30rem mb-5 p-3" [style]="{ 'width': '25rem' }" [filter]="true"></p-dropdown>
+      </div>
+
+      <!-- Ciudad (dropdown) -->
+
+      <div class="field col-12 md:col-6 max-w-30rem">
+        <label for="city" class="block text-900 text-xl font-medium mb-2">Ciudad</label>
+        <p-dropdown id="city" formControlName="city" [options]="citiesOptions" placeholder="Selecciona una ciudad" pInputText
+          class="w-full md:w-30rem mb-5 p-3" [style]="{ 'width': '25rem' }" [filter]="true"></p-dropdown>
+      </div>
+
+
+      <!-- Dirección -->
+      <div class="field col-12 md:col-6 max-w-30rem">
+        <label for="address" class="block text-900 text-xl font-medium mb-2">Dirección</label>
+        <input id="address" type="text" formControlName="address" placeholder="Address" pInputText class="w-full md:w-30rem mb-5"
+          style="padding: 1rem" />
+      </div>
+
+
+    </div>
+    <button pButton pRipple label="Registrarse" class="block w-full h-4rem p-3 text-xl md:w-30rem" type="submit"
+      style="margin: 0 auto;"></button>
+  </form>
+  <div class="flex align-items-center justify-content-center mt-5 gap-5">
+    <p>
+      Ya tienes una cuenta?
+      <!-- Añadir router link -->
+      <a routerLink="/auth/login" class="font-medium no-underline ml-2 text-right cursor-pointer"
+        style="color: var(--primary-color)">Iniciar Sesión</a>
+    </p>
+  </div>
 </div>

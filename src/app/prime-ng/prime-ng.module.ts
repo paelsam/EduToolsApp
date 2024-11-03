@@ -12,7 +12,7 @@ import { InputSwitchModule } from 'primeng/inputswitch';
 import { RadioButtonModule } from 'primeng/radiobutton';
 import { RippleModule } from 'primeng/ripple';
 import { SidebarModule } from 'primeng/sidebar';
-
+import { DropdownModule } from 'primeng/dropdown';
 @NgModule({
   declarations: [],
   imports: [CommonModule],
@@ -28,6 +28,8 @@ import { SidebarModule } from 'primeng/sidebar';
     RadioButtonModule,
     InputSwitchModule,
     RippleModule,
+    DropdownModule
+
   ],
 })
 export class PrimeNgModule {}
