@@ -2,10 +2,11 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { StateCitiesService } from '../../../shared/services/state-cities.service';
 import { environment } from '../../../../environments/environment';
-import { Subscription } from 'rxjs';
+import { catchError, map, Observable, Subscription } from 'rxjs';
 import { ReCaptchaV3Service } from 'ng-recaptcha';
 import { ValidatorsService } from '../../../shared/services/validators.service';
 import { AuthenticationService } from '../../services/authentication.service';
+import { MessageService } from 'primeng/api';
 
 @Component({
   selector: 'app-register-page',
@@ -13,7 +14,8 @@ import { AuthenticationService } from '../../services/authentication.service';
   styleUrl: './register-page.component.scss',
 })
 export class RegisterPageComponent implements OnInit, OnDestroy {
-  public siteKey: string = environment.RECAPTCHA_SITE_KEY;
+  private siteKey: string = environment.RECAPTCHA_SITE_KEY;
+  private recaptchaToken: string = '';
   public recentError?: { error: string };
 
   public allExecutionsSubcription!: Subscription;
@@ -27,7 +29,8 @@ export class RegisterPageComponent implements OnInit, OnDestroy {
     private stateCitiesService: StateCitiesService,
     private recaptchaV3Service: ReCaptchaV3Service,
     private validatorsService: ValidatorsService,
-    private authenticationService: AuthenticationService
+    private authenticationService: AuthenticationService,
+    private messageService: MessageService
   ) {}
 
   ngOnInit(): void {
@@ -83,32 +86,61 @@ export class RegisterPageComponent implements OnInit, OnDestroy {
   });
 
   public onSubmit(): void {
-    this.executeRecaptcha('register');
     if (this.registerForm.invalid) {
       this.registerForm.markAllAsTouched();
       console.log(this.registerForm.value);
+      return;
     }
-  }
 
-  public executeRecaptcha(action: string): void {
-    this.recaptchaV3Service.execute(action).subscribe({
-      next: (token) => {
-        console.log(token);
-        this.recentError = undefined;
-      },
-      error: (error) => {
-        console.error(error);
-        this.recentError = { error };
-      },
+    this.executeRecaptcha('register').subscribe((token) => {
+      this.recaptchaToken = token;
+
+      this.authenticationService
+        .verifyRecaptchaToken(this.recaptchaToken)
+        .subscribe({
+          next: (isHuman: boolean) => {
+            if (isHuman) {
+              this.authenticationService
+                .registerUser(this.registerForm.value)
+                .subscribe({
+                  next: (response: { message: string }) => {
+                    this.messageService.add({
+                      severity: 'success',
+                      summary: 'Registro',
+                      detail: response.message,
+                    });
+                  },
+                  error: (error) => {
+                    this.messageService.add({
+                      severity: 'error',
+                      summary: 'Error',
+                      detail: 'Error al registrar el usuario',
+                    });
+                    console.error(error);
+                  },
+                });
+            }
+          },
+          error: (error) => {
+            this.messageService.add({
+              severity: 'error',
+              summary: 'Error',
+              detail: 'Error al verificar el token de recaptcha',
+            });
+          },
+        });
     });
   }
 
-  isValidField( field: string ): boolean | null {
+  public executeRecaptcha(action: string): Observable<string> {
+    return this.recaptchaV3Service.execute(action);
+  }
+
+  isValidField(field: string): boolean | null {
     return this.validatorsService.isValidField(this.registerForm, field);
   }
 
-  getFieldError( field: string ): string | null {
+  getFieldError(field: string): string | null {
     return this.validatorsService.getFieldError(this.registerForm, field);
   }
-
 }

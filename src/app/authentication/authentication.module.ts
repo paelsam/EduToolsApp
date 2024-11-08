@@ -11,10 +11,12 @@ import { HttpClientModule } from '@angular/common/http';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RECAPTCHA_V3_SITE_KEY, RecaptchaV3Module } from 'ng-recaptcha';
 import { environment } from '../../environments/environment';
+import { MessageService } from 'primeng/api';
 
 
 @NgModule({
   providers: [
+    MessageService,
     importProvidersFrom(RecaptchaV3Module),
     {
       provide: RECAPTCHA_V3_SITE_KEY,

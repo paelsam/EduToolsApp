@@ -13,6 +13,9 @@ import { RadioButtonModule } from 'primeng/radiobutton';
 import { RippleModule } from 'primeng/ripple';
 import { SidebarModule } from 'primeng/sidebar';
 import { DropdownModule } from 'primeng/dropdown';
+import { DialogModule } from 'primeng/dialog';
+import { ToastModule } from 'primeng/toast';
+
 @NgModule({
   declarations: [],
   imports: [CommonModule],
@@ -28,7 +31,9 @@ import { DropdownModule } from 'primeng/dropdown';
     RadioButtonModule,
     InputSwitchModule,
     RippleModule,
-    DropdownModule
+    DropdownModule,
+    DialogModule,
+    ToastModule,
 
   ],
 })
