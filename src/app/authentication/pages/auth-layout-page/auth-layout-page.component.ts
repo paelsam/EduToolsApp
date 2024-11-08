@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { LayoutService } from '../../../shared/services/layout-service.service';
+import { LayoutService } from '../../../shared/services/layout.service';
 
 @Component({
   selector: 'app-auth-layout-page',

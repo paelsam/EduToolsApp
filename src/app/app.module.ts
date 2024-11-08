@@ -4,7 +4,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClientModule, HttpClientXsrfModule } from '@angular/common/http';
 
 
 
@@ -18,7 +18,13 @@ import { HttpClientModule } from '@angular/common/http';
     AppRoutingModule
   ],
   providers: [
-    importProvidersFrom(HttpClientModule)
+    importProvidersFrom(HttpClientModule),
+    importProvidersFrom(
+      HttpClientXsrfModule.withOptions({
+        cookieName: 'csrftoken',
+        headerName: 'Set-Cookie',
+      })
+    )
   ],
   bootstrap: [AppComponent]
 })

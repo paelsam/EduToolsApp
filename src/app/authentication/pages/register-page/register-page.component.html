@@ -1,69 +1,91 @@
-<div class="w-full surface-card py-5 px-5 container " style="border-radius: 53px;">
-  <h2 class="text-900 text-3xl font-medium text-center mb-5">Comienza a comprar hoy!</h2>
+<div class=" surface-card py-8 px-5 sm:px-8" style="border-radius: 53px; max-width: 75rem;">
+  <h2 class="text-900 text-4xl font-medium text-center mb-5">Comienza a comprar hoy!</h2>
 
-  <form [formGroup]="registerForm" (submit)="onSubmit()">
-    <div class="formgrid grid md:gap-1 lg:justify-content-center">
+  <form [formGroup]="registerForm" (submit)="onSubmit()" class="p-fluid">
+    <div class="formgrid grid md:gap-1 justify-content-center">
       <!-- Nombre -->
-      <div class="field col-12 md:col-6 max-w-30rem">
-        <label for="name" class="block text-900 text-xl font-medium mb-2">Nombre</label>
-        <input id="name" formControlName="first_name" type="text" placeholder="Name" pInputText class="w-full md:w-30rem mb-5"
+      <div class="field col-12 md:col-4 mb-5">
+        <label for="first_name" class="block text-900 text-xl font-medium mb-2">Nombre</label>
+        <input id="first_name" formControlName="first_name" type="text" placeholder="Name" pInputText
           style="padding: 1rem" />
+        <small class="p-error" *ngIf="isValidField('first_name')">
+          {{ getFieldError('first_name') }}
+        </small>
+
       </div>
 
       <!-- Apellido -->
-      <div class="field col-12 md:col-6 max-w-30rem">
-        <label for="lastname" class="block text-900 text-xl font-medium mb-2">Apellido</label>
-        <input id="lastname" formControlName="last_name" type="text" placeholder="Lastname" pInputText class="w-full md:w-30rem mb-5"
+      <div class="field col-12 md:col-4 mb-5">
+        <label for="last_name" class="block text-900 text-xl font-medium mb-2">Apellido</label>
+        <input id="last_name" formControlName="last_name" type="text" placeholder="Apellido" pInputText
           style="padding: 1rem" />
+        <small class="p-error" *ngIf="isValidField('last_name')">
+          {{ getFieldError('last_name') }}
+        </small>
       </div>
 
       <!-- Usuario -->
-      <div class="field col-12 md:col-6 max-w-30rem">
+      <div class="field col-12 md:col-4 mb-5">
         <label for="username" class="block text-900 text-xl font-medium mb-2">Usuario</label>
-        <input id="username" formControlName="username" type="text" placeholder="Username" pInputText class="w-full md:w-30rem mb-5"
-          style="padding: 1rem" />
+        <input id="username" formControlName="username" type="text" placeholder="Username" pInputText
+          class="w-full" style="padding: 1rem" />
+        <small class="p-error" *ngIf="isValidField('username')">
+          {{ getFieldError('username') }}
+        </small>
       </div>
 
       <!-- Correo -->
-      <div class="field col-12 md:col-6 max-w-30rem">
-        <label for="email1" class="block text-900 text-xl font-medium mb-2">Correo</label>
-        <input id="email1" formControlName="email" type="text" placeholder="Email address" pInputText class="w-full md:w-30rem mb-5"
-          style="padding: 1rem" />
+      <div class="field col-12 md:col-4 mb-5">
+        <label for="email" class="block text-900 text-xl font-medium mb-2">Correo</label>
+        <input id="email" formControlName="email" type="text" placeholder="Email address" pInputText
+          class="w-full" style="padding: 1rem" />
+        <small class="p-error" *ngIf="isValidField('email')">
+          {{ getFieldError('email') }}
+        </small>
       </div>
 
       <!-- Contraseña -->
-      <div class="field col-12 md:col-6 max-w-30rem">
-        <label for="password1" class="block text-900 font-medium text-xl mb-2">Contraseña</label>
-        <p-password id="password1" formControlName="password" placeholder="Password" [toggleMask]="true" styleClass="mb-5"
-          inputStyleClass="w-full p-3 md:w-30rem"></p-password>
-      </div>
-
-      <!-- Titulo separador para direccion -->
-      <div class="lg:text-center col-12">
-        <h4 class="text-900 text-2xl font-medium mb-2">Dirección de envío</h4>
+      <div class="field col-12 md:col-4 mb-5">
+        <label for="password" class="block text-900 font-medium text-xl mb-2">Contraseña</label>
+        <p-password id="password" formControlName="password" placeholder="Password" [toggleMask]="true"
+          styleClass="w-full" inputStyleClass="w-full p-3"></p-password>
+        <small class="p-error" *ngIf="isValidField('password')">
+          {{ getFieldError('password') }}
+        </small>
       </div>
 
       <!-- Departamento (dropdown) -->
-      <div class="field col-12 md:col-6 max-w-30rem">
+      <div class="field col-12 md:col-4">
         <label for="department" class="block text-900 text-xl font-medium mb-2">Departamento</label>
-        <p-dropdown id="department" formControlName="state" [options]="statesOptions" placeholder="Selecciona un departamento" pInputText
-          class="w-full md:w-30rem mb-5 p-3" [style]="{ 'width': '25rem' }" [filter]="true"></p-dropdown>
+        <p-dropdown id="department" formControlName="state" [loading]="!statesOptions.length" [options]="statesOptions"
+          placeholder="Selecciona un departamento" pInputText class="block" inputStyleClass="w-full" styleClass="w-full"
+          [filter]="true"></p-dropdown>
+        <small class="p-error" *ngIf="isValidField('state')">
+          {{ getFieldError('state') }}
+        </small>
       </div>
 
       <!-- Ciudad (dropdown) -->
 
-      <div class="field col-12 md:col-6 max-w-30rem">
+      <div class="field col-12 md:col-4">
         <label for="city" class="block text-900 text-xl font-medium mb-2">Ciudad</label>
-        <p-dropdown id="city" formControlName="city" [options]="citiesOptions" placeholder="Selecciona una ciudad" pInputText
-          class="w-full md:w-30rem mb-5 p-3" [style]="{ 'width': '25rem' }" [filter]="true"></p-dropdown>
+        <p-dropdown id="city" formControlName="city" [loading]="!citiesOptions.length" [options]="citiesOptions"
+          placeholder="Selecciona una ciudad" pInputText class="block" inputStyleClass="w-full" styleClass="w-full"
+          [filter]="true"></p-dropdown>
+        <small class="p-error" *ngIf="isValidField('city')">
+          {{ getFieldError('city') }}
+        </small>
       </div>
 
 
       <!-- Dirección -->
-      <div class="field col-12 md:col-6 max-w-30rem">
+      <div class="field col-12 md:col-4 mb-5">
         <label for="address" class="block text-900 text-xl font-medium mb-2">Dirección</label>
-        <input id="address" type="text" formControlName="address" placeholder="Address" pInputText class="w-full md:w-30rem mb-5"
+        <input id="address" type="text" formControlName="address" placeholder="Address" pInputText class="w-full"
           style="padding: 1rem" />
+        <small class="p-error" *ngIf="isValidField('address')">
+          {{ getFieldError('address') }}
+        </small>
       </div>
 
 

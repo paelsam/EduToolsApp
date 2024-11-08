@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { PrimeNGConfig } from 'primeng/api';
-import { AppConfig, LayoutService } from './shared/services/layout-service.service';
+import { AuthenticationService } from './authentication/services/authentication.service';
+import { getCookie } from '../helpers/cookiesFunctions';
 
 @Component({
   selector: 'app-root',
@@ -10,11 +11,14 @@ import { AppConfig, LayoutService } from './shared/services/layout-service.servi
 export class AppComponent implements OnInit {
   constructor(
     private primengConfig: PrimeNGConfig,
-    private layoutService: LayoutService
+    private authenticationService: AuthenticationService
   ) {}
 
   ngOnInit() {
     this.primengConfig.ripple = true;
+    if (!getCookie('csrftoken')) {
+      this.authenticationService.loadCSRFToken();
+    }
   }
 
 }
