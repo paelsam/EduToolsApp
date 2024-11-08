@@ -21,7 +21,7 @@ export class AuthenticationService {
         withCredentials: true,
       })
       .subscribe((response) => {
-        this.CSRFToken = response.csrfToken + "Partitioned;";
+        this.CSRFToken = response.csrfToken;
       });
   }
 
