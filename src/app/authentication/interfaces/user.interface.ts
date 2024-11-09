@@ -10,4 +10,5 @@ export interface User {
   address: string;
   city: string;
   state: string;
+  id?: number;
 }

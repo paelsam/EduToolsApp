@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ValidatorsService } from '../../../shared/services/validators.service';
-import { FormBuilder, Validators } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { ReCaptchaV3Service } from 'ng-recaptcha';
 import { Subscription } from 'rxjs';
 import { environment } from '../../../../environments/environment';
@@ -54,7 +54,7 @@ export class LoginPageComponent implements OnInit, OnDestroy {
       this.allExecutionErrorSubcription.unsubscribe();
   }
 
-  public loginForm = this.formBuilder.group({
+  public loginForm: FormGroup = this.formBuilder.group({
     username: ['', [Validators.required]],
     password: ['', [Validators.required, Validators.minLength(6)]],
   });
@@ -65,9 +65,24 @@ export class LoginPageComponent implements OnInit, OnDestroy {
       return;
     }
 
-    console.log('Form submitted', this.loginForm.value);
     this.recaptchaV3Service.execute('login').subscribe((token) => {
-      console.log('reCAPTCHA token', token);
+      this.authenticationService
+        .verifyRecaptchaToken(token)
+        .subscribe((isHuman) => {
+          if (isHuman) {
+            this.authenticationService
+              .loginUser(this.loginForm.value)
+              .subscribe({
+                next: (response) => {
+                  console.log(response);
+                },
+                error: (error) => {
+                  console.error(error);
+                  this.recentError = error.error;
+                }
+              });
+          }
+        });
     });
   }
 

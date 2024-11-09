@@ -109,6 +109,8 @@ export class RegisterPageComponent implements OnInit, OnDestroy {
                       summary: 'Registro',
                       detail: response.message,
                     });
+
+                    
                   },
                   error: (error) => {
                     this.messageService.add({
