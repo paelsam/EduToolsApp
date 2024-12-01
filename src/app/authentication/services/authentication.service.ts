@@ -23,7 +23,7 @@ export class AuthenticationService {
 
   public loadCSRFToken(): void {
     this.http
-      .get<CSRFResponse>(`${this.baseUrl}/api/auth/csrf/`, {
+      .get<CSRFResponse>(`${this.baseUrl}/api/user/csrf/`, {
         withCredentials: true,
       })
       .subscribe((response) => {
@@ -36,7 +36,7 @@ export class AuthenticationService {
     formData.append('recaptcha_token', token);
 
     return this.http
-      .post(`${this.baseUrl}/api/auth/recaptcha-verify/`, formData, {
+      .post(`${this.baseUrl}/api/user/recaptcha-verify/`, formData, {
         withCredentials: true,
         headers: new HttpHeaders({ 'X-CSRFToken': this.CSRFToken }),
       })
@@ -67,7 +67,7 @@ export class AuthenticationService {
 
     return this.http
       .post<{ message: string }>(
-        `${this.baseUrl}/api/auth/register/`,
+        `${this.baseUrl}/api/user/register/`,
         formData,
         {
           withCredentials: true,
@@ -100,7 +100,7 @@ export class AuthenticationService {
     formData.append('password', data.password);
 
     return this.http
-      .post<LoginResponse>(`${this.baseUrl}/api/auth/login/`, formData, {
+      .post<LoginResponse>(`${this.baseUrl}/api/user/login/`, formData, {
         withCredentials: true,
         headers: new HttpHeaders({ 'X-CSRFToken': this.CSRFToken }),
       })
@@ -132,7 +132,7 @@ export class AuthenticationService {
     }
 
     return this.http
-      .get<User>(`${this.baseUrl}/api/auth/`, {
+      .get<User>(`${this.baseUrl}/api/user/`, {
         withCredentials: true,
         headers: new HttpHeaders({
           'X-CSRFToken': this.CSRFToken,

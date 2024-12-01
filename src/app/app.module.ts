@@ -4,7 +4,10 @@ import { BrowserModule } from '@angular/platform-browser';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { HttpClientModule, HttpClientXsrfModule } from '@angular/common/http';
+import { HTTP_INTERCEPTORS, HttpClientModule, HttpClientXsrfModule } from '@angular/common/http';
+import { PrimeNgModule } from './prime-ng/prime-ng.module';
+import { MessageService } from 'primeng/api';
+import { HttpErrorInterceptor } from './shared/interceptors/http-error.interceptor';
 
 
 
@@ -15,7 +18,8 @@ import { HttpClientModule, HttpClientXsrfModule } from '@angular/common/http';
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
-    AppRoutingModule
+    AppRoutingModule,
+    PrimeNgModule
   ],
   providers: [
     importProvidersFrom(HttpClientModule),
@@ -24,7 +28,13 @@ import { HttpClientModule, HttpClientXsrfModule } from '@angular/common/http';
         cookieName: 'csrftoken',
         headerName: 'Set-Cookie',
       })
-    )
+    ),
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: HttpErrorInterceptor,
+      multi: true
+    },
+    MessageService
   ],
   bootstrap: [AppComponent]
 })

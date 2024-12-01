@@ -24,6 +24,8 @@ export class RegisterPageComponent implements OnInit, OnDestroy {
   public statesOptions: string[] = [];
   public citiesOptions: string[] = [];
 
+  public loading: boolean = false;
+
   constructor(
     private formBuilder: FormBuilder,
     private stateCitiesService: StateCitiesService,
@@ -34,17 +36,6 @@ export class RegisterPageComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    this.allExecutionsSubcription = this.recaptchaV3Service.onExecute.subscribe(
-      (token) => {
-        // console.log(token);
-      }
-    );
-
-    this.allExecutionErrorSubcription =
-      this.recaptchaV3Service.onExecuteError.subscribe((error) => {
-        console.log(error);
-      });
-
     // Getting the states
     this.stateCitiesService.getStates().subscribe((states) => {
       this.statesOptions = states;
@@ -85,7 +76,10 @@ export class RegisterPageComponent implements OnInit, OnDestroy {
     state: ['', Validators.required],
   });
 
+  // ! Refactorizar este código, debido a que se creó un servicio para manejar los errores
   public onSubmit(): void {
+    this.loading = true;
+
     if (this.registerForm.invalid) {
       this.registerForm.markAllAsTouched();
       console.log(this.registerForm.value);
@@ -109,8 +103,8 @@ export class RegisterPageComponent implements OnInit, OnDestroy {
                       summary: 'Registro',
                       detail: response.message,
                     });
-
-                    
+                    this.registerForm.reset();
+                    this.loading = false;
                   },
                   error: (error) => {
                     this.messageService.add({
@@ -119,6 +113,7 @@ export class RegisterPageComponent implements OnInit, OnDestroy {
                       detail: 'Error al registrar el usuario',
                     });
                     console.error(error);
+                    this.loading = false;
                   },
                 });
             }
@@ -129,6 +124,7 @@ export class RegisterPageComponent implements OnInit, OnDestroy {
               summary: 'Error',
               detail: 'Error al verificar el token de recaptcha',
             });
+            this.loading = false;
           },
         });
     });

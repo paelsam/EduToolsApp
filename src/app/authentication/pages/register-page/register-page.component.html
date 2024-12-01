@@ -1,5 +1,4 @@
 <div class=" surface-card py-8 px-5 sm:px-8" style="border-radius: 53px; max-width: 75rem;">
-  <p-toast />
   <h2 class="text-900 text-4xl font-medium text-center mb-5">Comienza a comprar hoy!</h2>
 
   <form [formGroup]="registerForm" (submit)="onSubmit()" class="p-fluid">
@@ -91,8 +90,9 @@
 
 
     </div>
+    <!-- Deshabilitar una vez luego de darle click, en caso de error, dejar habilitado el botón -->
     <button pButton pRipple label="Registrarse" class="block w-full h-4rem p-3 text-xl md:w-30rem" type="submit"
-      style="margin: 0 auto;"></button>
+      style="margin: 0 auto;" [disabled]="registerForm.invalid || loading"></button>
   </form>
   <div class="flex align-items-center justify-content-center mt-5 gap-5">
     <p>
