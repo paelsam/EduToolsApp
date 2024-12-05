@@ -24,7 +24,6 @@
                 <div class="flex flex-column md:align-items-end gap-5">
                   <span class="text-xl font-semibold text-900">{{ '$' + item.price }}</span>
                   <div class="flex flex-row-reverse md:flex-row gap-2">
-                    <p-button icon="pi pi-heart" [outlined]="true" />
                     <!-- Delete product button -->
                     <p-button icon="pi pi-trash" severity="danger" [outlined]="true"  />
                   </div>
@@ -55,7 +54,7 @@
                 <div class="flex flex-column gap-4 mt-4">
                   <span class="text-2xl font-semibold">{{ '$' + product.price }}</span>
                   <div class="flex gap-2">
-                    <p-button icon="pi pi-heart" [outlined]="true" />
+                    <p-button icon="pi pi-trash" severity="danger" [outlined]="true"  />
                   </div>
                 </div>
               </div>

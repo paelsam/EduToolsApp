@@ -1,7 +1,16 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+import { DashboardLayoutComponent } from './pages/dashboard-layout/dashboard-layout.component';
 
-const routes: Routes = [];
+const routes: Routes = [
+  {
+    path: '',
+    component: DashboardLayoutComponent,
+    children: [
+      //! Aquí se definen las rutas hijas
+    ]
+  }
+];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
