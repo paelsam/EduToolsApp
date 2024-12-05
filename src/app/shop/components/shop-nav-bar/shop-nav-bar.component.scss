@@ -1,0 +1,42 @@
+// Ajustes específicos para los estilos que no cubre PrimeFlex
+#header {
+  .container {
+    max-width: 1200px;
+  }
+
+  .container > div {
+    letter-spacing: 0.025em;
+  }
+
+  #menu-small {
+    transition: max-height 0.3s ease-out;
+    max-height: 0;
+    overflow: hidden;
+  }
+
+  #menu-toggle:checked + label + #menu-small {
+    max-height: 500px; /* Ajusta según el contenido */
+  }
+
+  .hover\:grow {
+    transition: all 0.3s;
+    transform: scale(1);
+  }
+
+  .hover\:grow:hover {
+    transform: scale(1.02);
+  }
+
+  ul {
+    list-style-type: none;
+  }
+
+  a {
+    text-decoration: none;
+    transition: color 0.3s ease;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}

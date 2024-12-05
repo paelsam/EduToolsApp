@@ -9,8 +9,6 @@ export class HttpErrorInterceptor implements HttpInterceptor {
     constructor(private errorHandlingService: ErrorHandlingService) { }
 
     intercept(req: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
-      console.log('intercepted request ... ');
-      console.log(req)
         return next.handle(req).pipe(
             catchError((error: HttpErrorResponse) => {
                 this.errorHandlingService.handleHttpError(error);

@@ -1,0 +1,31 @@
+<nav id="header" class="surface-50 shadow-1 w-full py-3">
+  <div class="container mx-auto flex align-items-center justify-content-between px-3">
+
+    <!-- Logo -->
+    <div class="flex align-items-center justify-content-center">
+      <a href="#" class="flex align-items-center justify-content-center no-underline">
+        <img src="assets/layout/images/{{
+          layoutService.config().colorScheme === 'light'
+            ? 'logo-dark'
+            : 'logo-white'
+        }}.svg" alt="Sakai logo" class="mb-2 w-3" />
+        <h1 class="font-medium text-3xl text-900">EduTools</h1>
+      </a>
+    </div>
+
+    <!-- Íconos de usuario y carrito -->
+    <div class="flex align-items-center gap-3">
+      <div>
+        <p-menu #menu [popup]="true" [model]="menuItems"></p-menu>
+        <button pButton (click)="menu.toggle($event)">
+          <i class="pi pi-user"></i>
+        </button>
+      </div>
+      <button pButton (click)="openCart()">
+        <i class="pi pi-shopping-cart"></i>
+      </button>
+    </div>
+  </div>
+
+  <app-shop-cart [isVisible]="isVisible" (isVisibleChange)="toggleCart($event)" ></app-shop-cart>
+</nav>

@@ -1,0 +1,28 @@
+section {
+  .container {
+    max-width: 1000px;
+    margin: 0 auto;
+  }
+
+  // Centrar imagen en el contenedor
+
+
+
+  h1 {
+    margin-bottom: 1rem;
+  }
+
+  a {
+    text-decoration: none;
+    transition: all 0.3s ease;
+
+    &:hover {
+      color: #000;
+      border-color: #000;
+    }
+  }
+
+  .border-bottom-1 {
+    border-bottom-width: 1px;
+  }
+}
