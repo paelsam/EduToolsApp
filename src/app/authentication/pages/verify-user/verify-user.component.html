@@ -1,0 +1,23 @@
+<!-- Loader template primeng -->
+
+<div
+  class="surface-card py-8 px-5 sm:px-8 flex flex-column justify-content-center align-items-center gap-3"
+  style="border-radius: 53px; max-width: 70rem;">
+  <ng-container *ngIf="loading && !isVerified">
+    <p-progressSpinner></p-progressSpinner>
+    <span class="ml-2 text-8xl">Verificando...</span>
+  </ng-container>
+
+  <!-- Error template -->
+  <ng-container *ngIf="!loading && !isVerified">
+    <!-- Icono de error -->
+    <i class="pi pi-exclamation-triangle mr-2 text-8xl" style="color: red;"></i>
+    <span class="mr-2 text-2xl">Error al verificar tu cuenta</span>
+  </ng-container>
+
+  <!-- Success template -->
+  <ng-container *ngIf="isVerified">
+    <i class="pi pi-check-circle mr-2 text-green-300 text-8xl"></i>
+    <span class="mr-2 text-2xl">Tu cuenta ha sido verificada con éxito.</span>
+  </ng-container>
+</div>

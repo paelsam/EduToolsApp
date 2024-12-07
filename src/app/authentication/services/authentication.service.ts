@@ -2,7 +2,7 @@ import { computed, Injectable, signal } from '@angular/core';
 import { environment } from '../../../environments/environment';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { CSRFResponse } from '../interfaces/csrf-response.interface';
-import { catchError, map, Observable, of, OperatorFunction } from 'rxjs';
+import { map, Observable, of } from 'rxjs';
 import { getCookie } from '../../../helpers/cookiesFunctions';
 import { User } from '../interfaces/user.interface';
 import { LoginRequest } from '../interfaces/login-request.interface';
@@ -43,10 +43,6 @@ export class AuthenticationService {
       .pipe(
         map(() => {
           return true;
-        }),
-        catchError((error) => {
-          console.error(error);
-          return of(false);
         })
       );
   }
@@ -76,12 +72,8 @@ export class AuthenticationService {
       )
       .pipe(
         map((response) => {
-          console.log(response);
+          console.log('Register router API:', response);
           return response;
-        }),
-        catchError((error) => {
-          console.error(error);
-          return of({ message: 'Error al registrar el usuario' });
         })
       );
   }
@@ -106,14 +98,10 @@ export class AuthenticationService {
       })
       .pipe(
         map((response: LoginResponse) => {
-          console.log(response);
+          console.log('Login Route Response:', response);
           localStorage.setItem('token', response.token);
           this._user.set(response.user);
           return true;
-        }),
-        catchError((error) => {
-          console.error(error);
-          return of({ message: 'Error al iniciar sesión' });
         })
       );
   }
@@ -143,10 +131,29 @@ export class AuthenticationService {
         map((response) => {
           this._user.set(response);
           return true;
-        }),
-        catchError((error) => {
-          console.error(error);
-          return of(false);
+        })
+      );
+  }
+
+  public activateUser(userId: string, token: string): Observable<boolean> {
+
+    const formData = new FormData();
+    formData.append('uidb64', userId);
+    formData.append('token', token);
+
+
+    return this.http
+      .post<boolean>(
+        `${this.baseUrl}/api/user/activate/`, formData,
+        {
+          withCredentials: true,
+          headers: new HttpHeaders({ 'X-CSRFToken': this.CSRFToken }),
+        }
+      )
+      .pipe(
+        map((response) => {
+          console.log("Response ACTIVATE user:", response);
+          return true;
         })
       );
   }

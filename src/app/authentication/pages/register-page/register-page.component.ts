@@ -2,11 +2,20 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { StateCitiesService } from '../../../shared/services/state-cities.service';
 import { environment } from '../../../../environments/environment';
-import { catchError, map, Observable, Subscription } from 'rxjs';
+import {
+  catchError,
+  map,
+  Observable,
+  of,
+  Subscription,
+  switchMap,
+  tap,
+} from 'rxjs';
 import { ReCaptchaV3Service } from 'ng-recaptcha';
 import { ValidatorsService } from '../../../shared/services/validators.service';
 import { AuthenticationService } from '../../services/authentication.service';
 import { MessageService } from 'primeng/api';
+import { LoadingService } from '../../../shared/services/loading.service';
 
 @Component({
   selector: 'app-register-page',
@@ -32,10 +41,16 @@ export class RegisterPageComponent implements OnInit, OnDestroy {
     private recaptchaV3Service: ReCaptchaV3Service,
     private validatorsService: ValidatorsService,
     private authenticationService: AuthenticationService,
-    private messageService: MessageService
+    private messageService: MessageService,
+    private loadingService: LoadingService
   ) {}
 
   ngOnInit(): void {
+    // Loading service
+    this.loadingService.loading$.subscribe((state) => {
+      this.loading = state;
+    });
+
     // Getting the states
     this.stateCitiesService.getStates().subscribe((states) => {
       this.statesOptions = states;
@@ -48,13 +63,6 @@ export class RegisterPageComponent implements OnInit, OnDestroy {
         this.registerForm.get('city')!.enable();
       });
     });
-  }
-
-  public ngOnDestroy(): void {
-    if (this.allExecutionsSubcription)
-      this.allExecutionsSubcription.unsubscribe();
-    if (this.allExecutionErrorSubcription)
-      this.allExecutionErrorSubcription.unsubscribe();
   }
 
   // Create a form group with the form builder
@@ -76,9 +84,8 @@ export class RegisterPageComponent implements OnInit, OnDestroy {
     state: ['', Validators.required],
   });
 
-  // ! Refactorizar este código, debido a que se creó un servicio para manejar los errores
   public onSubmit(): void {
-    this.loading = true;
+    this.loadingService.setLoading(true);
 
     if (this.registerForm.invalid) {
       this.registerForm.markAllAsTouched();
@@ -86,48 +93,40 @@ export class RegisterPageComponent implements OnInit, OnDestroy {
       return;
     }
 
-    this.executeRecaptcha('register').subscribe((token) => {
-      this.recaptchaToken = token;
-
-      this.authenticationService
-        .verifyRecaptchaToken(this.recaptchaToken)
-        .subscribe({
-          next: (isHuman: boolean) => {
-            if (isHuman) {
-              this.authenticationService
-                .registerUser(this.registerForm.value)
-                .subscribe({
-                  next: (response: { message: string }) => {
-                    this.messageService.add({
-                      severity: 'success',
-                      summary: 'Registro',
-                      detail: response.message,
-                    });
-                    this.registerForm.reset();
-                    this.loading = false;
-                  },
-                  error: (error) => {
-                    this.messageService.add({
-                      severity: 'error',
-                      summary: 'Error',
-                      detail: 'Error al registrar el usuario',
-                    });
-                    console.error(error);
-                    this.loading = false;
-                  },
-                });
-            }
-          },
-          error: (error) => {
+    this.executeRecaptcha('register')
+      .pipe(
+        switchMap((token) => {
+          this.recaptchaToken = token;
+          return this.authenticationService.verifyRecaptchaToken(
+            this.recaptchaToken
+          );
+        }),
+        switchMap((isHuman) => {
+          if (!isHuman) {
             this.messageService.add({
               severity: 'error',
               summary: 'Error',
-              detail: 'Error al verificar el token de recaptcha',
+              detail: 'No se pudo verificar si eres humano.',
             });
-            this.loading = false;
-          },
-        });
-    });
+            return of(null); // Detener flujo si no es humano
+          }
+          return this.authenticationService.registerUser(
+            this.registerForm.value
+          );
+        }),
+        tap((response) => {
+          if (response) {
+            this.loadingService.setLoading(false);
+            this.messageService.add({
+              severity: 'success',
+              summary: 'Registro exitoso. Ahora, revisa tu correo para poder activar tu cuenta.',
+              detail: response.message,
+            });
+            this.registerForm.reset();
+          }
+        })
+      )
+      .subscribe();
   }
 
   public executeRecaptcha(action: string): Observable<string> {
@@ -140,5 +139,12 @@ export class RegisterPageComponent implements OnInit, OnDestroy {
 
   getFieldError(field: string): string | null {
     return this.validatorsService.getFieldError(this.registerForm, field);
+  }
+
+  public ngOnDestroy(): void {
+    if (this.allExecutionsSubcription)
+      this.allExecutionsSubcription.unsubscribe();
+    if (this.allExecutionErrorSubcription)
+      this.allExecutionErrorSubcription.unsubscribe();
   }
 }

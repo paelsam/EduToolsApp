@@ -1,4 +1,4 @@
-<div class=" surface-card py-8 px-5 sm:px-8" style="border-radius: 53px; max-width: 75rem;">
+<div class=" surface-card py-8 px-5 sm:px-8" style="border-radius: 53px; max-width: 70rem;">
   <h2 class="text-900 text-4xl font-medium text-center mb-5">Comienza a comprar hoy!</h2>
 
   <form [formGroup]="registerForm" (submit)="onSubmit()" class="p-fluid">
@@ -69,7 +69,7 @@
 
       <div class="field col-12 md:col-4">
         <label for="city" class="block text-900 text-xl font-medium mb-2">Ciudad</label>
-        <p-dropdown id="city" formControlName="city" [loading]="!citiesOptions.length" [options]="citiesOptions"
+        <p-dropdown id="city" formControlName="city" [options]="citiesOptions"
           placeholder="Selecciona una ciudad" pInputText class="block" inputStyleClass="w-full" styleClass="w-full"
           [filter]="true"></p-dropdown>
         <small class="p-error" *ngIf="isValidField('city')">
@@ -91,7 +91,7 @@
 
     </div>
     <!-- Deshabilitar una vez luego de darle click, en caso de error, dejar habilitado el botón -->
-    <button pButton pRipple label="Registrarse" class="block w-full h-4rem p-3 text-xl md:w-30rem" type="submit"
+    <button pButton pRipple [label]="loading ? 'Por favor, espere...' : 'Registrarse'" class="block w-full h-4rem p-3 text-xl md:w-30rem" type="submit"
       style="margin: 0 auto;" [disabled]="registerForm.invalid || loading"></button>
   </form>
   <div class="flex align-items-center justify-content-center mt-5 gap-5">

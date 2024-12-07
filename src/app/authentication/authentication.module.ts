@@ -12,6 +12,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RECAPTCHA_V3_SITE_KEY, RecaptchaV3Module } from 'ng-recaptcha';
 import { environment } from '../../environments/environment';
 import { MessageService } from 'primeng/api';
+import { VerifyUserComponent } from './pages/verify-user/verify-user.component';
 
 
 @NgModule({
@@ -26,7 +27,8 @@ import { MessageService } from 'primeng/api';
   declarations: [
     AuthLayoutPageComponent,
     LoginPageComponent,
-    RegisterPageComponent
+    RegisterPageComponent,
+    VerifyUserComponent
   ],
   imports: [
     CommonModule,

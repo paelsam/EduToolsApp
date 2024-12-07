@@ -18,6 +18,8 @@ import { ToastModule } from 'primeng/toast';
 import { DataViewModule } from 'primeng/dataview';
 import { TagModule } from 'primeng/tag';
 import { MenuModule } from 'primeng/menu';
+import { ProgressSpinnerModule } from 'primeng/progressspinner';
+import { MessageModule } from 'primeng/message';
 
 @NgModule({
   declarations: [],
@@ -40,6 +42,8 @@ import { MenuModule } from 'primeng/menu';
     DataViewModule,
     TagModule,
     MenuModule,
+    ProgressSpinnerModule,
+
   ],
 })
 export class PrimeNgModule {}
