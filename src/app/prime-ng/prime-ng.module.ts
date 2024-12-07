@@ -19,7 +19,7 @@ import { DataViewModule } from 'primeng/dataview';
 import { TagModule } from 'primeng/tag';
 import { MenuModule } from 'primeng/menu';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
-import { MessageModule } from 'primeng/message';
+import { InputOtpModule } from 'primeng/inputotp';
 
 @NgModule({
   declarations: [],
@@ -43,7 +43,7 @@ import { MessageModule } from 'primeng/message';
     TagModule,
     MenuModule,
     ProgressSpinnerModule,
-
+    InputOtpModule,
   ],
 })
 export class PrimeNgModule {}

@@ -1,57 +1,43 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ValidatorsService } from '../../../shared/services/validators.service';
-import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import {
+  FormBuilder,
+  FormControl,
+  FormGroup,
+  Validators,
+} from '@angular/forms';
 import { ReCaptchaV3Service } from 'ng-recaptcha';
-import { Subscription } from 'rxjs';
-import { environment } from '../../../../environments/environment';
+import { Observable, of, switchMap, tap } from 'rxjs';
 import { AuthenticationService } from '../../services/authentication.service';
+import { LoadingService } from '../../../shared/services/loading.service';
+import { MessageService } from 'primeng/api';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-login-page',
   templateUrl: './login-page.component.html',
-  styles: [
-    `
-      :host ::ng-deep .pi-eye,
-      :host ::ng-deep .pi-eye-slash {
-        transform: scale(1.6);
-        margin-right: 1rem;
-        color: var(--primary-color) !important;
-      }
-    `,
-  ],
+  styleUrl: './login-page.component.scss',
 })
-export class LoginPageComponent implements OnInit, OnDestroy {
-  public siteKey: string = environment.RECAPTCHA_SITE_KEY;
-  public recentError?: { error: string };
-
-  public allExecutionsSubcription!: Subscription;
-  public allExecutionErrorSubcription!: Subscription;
+export class LoginPageComponent implements OnInit {
+  private recapchaToken: string = '';
+  public loading: boolean = false;
+  public visible: boolean = false;
+  public otpValue!: number;
 
   constructor(
     private validatorsService: ValidatorsService,
     private formBuilder: FormBuilder,
     private recaptchaV3Service: ReCaptchaV3Service,
-    private authenticationService: AuthenticationService
+    private authenticationService: AuthenticationService,
+    private loadingService: LoadingService,
+    private messageService: MessageService,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
-    this.allExecutionsSubcription = this.recaptchaV3Service.onExecute.subscribe(
-      (token) => {
-        console.log(token);
-      }
-    );
-
-    this.allExecutionErrorSubcription =
-      this.recaptchaV3Service.onExecuteError.subscribe((error) => {
-        console.log(error);
-      });
-  }
-
-  public ngOnDestroy(): void {
-    if (this.allExecutionsSubcription)
-      this.allExecutionsSubcription.unsubscribe();
-    if (this.allExecutionErrorSubcription)
-      this.allExecutionErrorSubcription.unsubscribe();
+    this.loadingService.loading$.subscribe((state) => {
+      this.loading = state;
+    });
   }
 
   public loginForm: FormGroup = this.formBuilder.group({
@@ -60,30 +46,65 @@ export class LoginPageComponent implements OnInit, OnDestroy {
   });
 
   public onSubmit(): void {
+    this.loadingService.setLoading(true);
+
     if (this.loginForm.invalid) {
+      this.loadingService.setLoading(false);
       this.loginForm.markAllAsTouched();
       return;
     }
 
-    this.recaptchaV3Service.execute('login').subscribe((token) => {
-      this.authenticationService
-        .verifyRecaptchaToken(token)
-        .subscribe((isHuman) => {
-          if (isHuman) {
-            this.authenticationService
-              .loginUser(this.loginForm.value)
-              .subscribe({
-                next: (response) => {
-                  console.log(response);
-                },
-                error: (error) => {
-                  console.error(error);
-                  this.recentError = error.error;
-                }
-              });
+    this.executeRecaptcha('login')
+      .pipe(
+        switchMap((token) => {
+          this.recapchaToken = token;
+          return this.authenticationService.verifyRecaptchaToken(
+            this.recapchaToken
+          );
+        }),
+        switchMap((isHuman) => {
+          if (!isHuman) {
+            this.messageService.add({
+              severity: 'error',
+              summary: 'Error',
+              detail: 'No se pudo verificar si eres humano.',
+            });
+            this.loadingService.setLoading(false);
+            return of(null);
           }
-        });
-    });
+          return this.authenticationService.loginUser(this.loginForm.value);
+        }),
+        switchMap((response) => {
+          return this.authenticationService.send2FA();
+        }),
+        tap((response: unknown) => {
+          this.visible = true;
+          this.messageService.add({
+            severity: 'success',
+            summary: 'Éxito!',
+            detail: (response as { message: string }).message,
+          });
+        })
+      )
+      .subscribe();
+  }
+
+  public onVerifyOtp(): void {
+    if (!this.otpValue) {
+      this.loadingService.setLoading(false);
+      return;
+    }
+
+    this.authenticationService.verify2FA(String(this.otpValue))
+      .subscribe((response) => {
+        this.loadingService.setLoading(false);
+        console.log('Verificación de 2FA:', response);
+        this.router.navigate(['/store']);
+      });
+  }
+
+  public executeRecaptcha(action: string): Observable<string> {
+    return this.recaptchaV3Service.execute(action);
   }
 
   isValidField(field: string): boolean | null {

@@ -111,7 +111,7 @@ export class AuthenticationService {
     this._user.set(null);
   }
 
-  public verifyToken(): Observable<boolean> {
+  public verifyJWTToken(): Observable<boolean> {
     const token = localStorage.getItem('token');
 
     if (!token) {
@@ -135,24 +135,54 @@ export class AuthenticationService {
       );
   }
 
-  public activateUser(userId: string, token: string): Observable<boolean> {
+  public send2FA(): Observable<boolean> {
+    return this.http
+      .get<boolean>(`${this.baseUrl}/api/user/2fa/`, {
+        withCredentials: true,
+        headers: new HttpHeaders({
+          'X-CSRFToken': this.CSRFToken,
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
+        }),
+      })
+      .pipe(
+        map((response) => {
+          return response;
+        })
+      );
+  }
 
+  public verify2FA(code: string): Observable<boolean> {
+    const formData = new FormData();
+    formData.append('code', code);
+
+    return this.http
+      .post<boolean>(`${this.baseUrl}/api/user/2fa/`, formData, {
+        withCredentials: true,
+        headers: new HttpHeaders({
+          'X-CSRFToken': this.CSRFToken,
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
+        }),
+      })
+      .pipe(
+        map((response) => {
+          return response;
+        })
+      );
+  }
+
+  public activateUser(userId: string, token: string): Observable<boolean> {
     const formData = new FormData();
     formData.append('uidb64', userId);
     formData.append('token', token);
 
-
     return this.http
-      .post<boolean>(
-        `${this.baseUrl}/api/user/activate/`, formData,
-        {
-          withCredentials: true,
-          headers: new HttpHeaders({ 'X-CSRFToken': this.CSRFToken }),
-        }
-      )
+      .post<boolean>(`${this.baseUrl}/api/user/activate/`, formData, {
+        withCredentials: true,
+        headers: new HttpHeaders({ 'X-CSRFToken': this.CSRFToken }),
+      })
       .pipe(
         map((response) => {
-          console.log("Response ACTIVATE user:", response);
+          console.log('Response ACTIVATE user:', response);
           return true;
         })
       );

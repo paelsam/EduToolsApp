@@ -1,4 +1,4 @@
-<!-- Formulario -->
+<p-toast></p-toast>
 <div class="w-full surface-card py-8 px-5 sm:px-8" style="border-radius: 53px">
   <form [formGroup]="loginForm" (submit)="onSubmit()" class="p-fluid">
 
@@ -21,19 +21,39 @@
         </small>
       </div>
 
-      <button pButton pRipple label="Iniciar Sesión" class="block w-full p-3 text-xl md:w-30rem" type="submit"
-        [routerLink]="['/']"></button>
+      <button pButton pRipple [disabled]="loading" [label]="loading ? 'Por favor, espere...' : 'Iniciar Sesión'" class="block w-full p-3 text-xl md:w-30rem" type="submit"></button>
     </div>
   </form>
   <div class="flex align-items-center justify-content-between mt-5 gap-5">
     <p>
       No estás registrado?
-      <!-- Añadir router link -->
       <a routerLink="/auth/register" class="font-medium no-underline ml-2 text-right cursor-pointer"
         style="color: var(--primary-color)">Regístrate</a>
     </p>
   </div>
 
-  <!-- End Reactive Form -->
+  <p-dialog header="Verificar identidad" [modal]="true" [closable]="false" [(visible)]="visible" [style]="{ width: '30rem' }">
+    <span class="p-text-secondary block mb-5">
+      Hemos enviado un código de verificación a tu correo electrónico. Por favor, ingrésalo a continuación.
+    </span>
+    <div class="flex align-items-center gap-3 mb-3">
+        <label for="username" class="font-semibold w-6rem">Código OTP:</label>
+        <p-inputOtp [(ngModel)]="otpValue" [integerOnly]="true" [length]="6">
+          <ng-template pTemplate="input" let-token let-events="events">
+              <input
+                  pInputText
+                  class="custom-otp-input"
+                  (input)="events.input($event)"
+                  (keydown)="events.keydown($event)"
+                  type="text"
+                  [attr.value]="token"
+                  [maxLength]="1" />
+          </ng-template>
+      </p-inputOtp>
+    </div>
+
+    <div class="flex justify-content-center gap-2 mt-5">
+        <p-button [label]="loading ? 'Enviar' : 'Enviando...'" (onClick)="onVerifyOtp()" />
+    </div>
+  </p-dialog>
 </div>
-<!-- Fin Formulario -->

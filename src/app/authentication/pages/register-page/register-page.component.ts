@@ -3,8 +3,6 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { StateCitiesService } from '../../../shared/services/state-cities.service';
 import { environment } from '../../../../environments/environment';
 import {
-  catchError,
-  map,
   Observable,
   of,
   Subscription,
@@ -22,13 +20,8 @@ import { LoadingService } from '../../../shared/services/loading.service';
   templateUrl: './register-page.component.html',
   styleUrl: './register-page.component.scss',
 })
-export class RegisterPageComponent implements OnInit, OnDestroy {
-  private siteKey: string = environment.RECAPTCHA_SITE_KEY;
+export class RegisterPageComponent implements OnInit {
   private recaptchaToken: string = '';
-  public recentError?: { error: string };
-
-  public allExecutionsSubcription!: Subscription;
-  public allExecutionErrorSubcription!: Subscription;
 
   public statesOptions: string[] = [];
   public citiesOptions: string[] = [];
@@ -88,8 +81,8 @@ export class RegisterPageComponent implements OnInit, OnDestroy {
     this.loadingService.setLoading(true);
 
     if (this.registerForm.invalid) {
+      this.loadingService.setLoading(false);
       this.registerForm.markAllAsTouched();
-      console.log(this.registerForm.value);
       return;
     }
 
@@ -108,6 +101,7 @@ export class RegisterPageComponent implements OnInit, OnDestroy {
               summary: 'Error',
               detail: 'No se pudo verificar si eres humano.',
             });
+            this.loadingService.setLoading(false);
             return of(null); // Detener flujo si no es humano
           }
           return this.authenticationService.registerUser(
@@ -139,12 +133,5 @@ export class RegisterPageComponent implements OnInit, OnDestroy {
 
   getFieldError(field: string): string | null {
     return this.validatorsService.getFieldError(this.registerForm, field);
-  }
-
-  public ngOnDestroy(): void {
-    if (this.allExecutionsSubcription)
-      this.allExecutionsSubcription.unsubscribe();
-    if (this.allExecutionErrorSubcription)
-      this.allExecutionErrorSubcription.unsubscribe();
   }
 }

@@ -92,7 +92,7 @@
     </div>
     <!-- Deshabilitar una vez luego de darle click, en caso de error, dejar habilitado el botón -->
     <button pButton pRipple [label]="loading ? 'Por favor, espere...' : 'Registrarse'" class="block w-full h-4rem p-3 text-xl md:w-30rem" type="submit"
-      style="margin: 0 auto;" [disabled]="registerForm.invalid || loading"></button>
+      style="margin: 0 auto;" [disabled]="loading"></button>
   </form>
   <div class="flex align-items-center justify-content-center mt-5 gap-5">
     <p>
