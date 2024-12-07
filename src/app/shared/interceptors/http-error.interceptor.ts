@@ -11,7 +11,7 @@ import { ErrorHandlingService } from '../services/error-handling.service';
 import { LoadingService } from '../services/loading.service';
 
 @Injectable()
-export class HttpErrorInterceptor implements HttpInterceptor {
+export class HttpErrorInterceptorService implements HttpInterceptor {
   constructor(
     private errorHandlingService: ErrorHandlingService,
     private loadingService: LoadingService

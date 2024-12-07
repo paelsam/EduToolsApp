@@ -7,7 +7,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { HTTP_INTERCEPTORS, HttpClientModule, HttpClientXsrfModule } from '@angular/common/http';
 import { PrimeNgModule } from './prime-ng/prime-ng.module';
 import { MessageService } from 'primeng/api';
-import { HttpErrorInterceptor } from './shared/interceptors/http-error.interceptor';
+import { HttpErrorInterceptorService } from './shared/interceptors/http-error.interceptor';
 
 
 
@@ -31,7 +31,7 @@ import { HttpErrorInterceptor } from './shared/interceptors/http-error.intercept
     ),
     {
       provide: HTTP_INTERCEPTORS,
-      useClass: HttpErrorInterceptor,
+      useClass: HttpErrorInterceptorService,
       multi: true
     },
     MessageService
