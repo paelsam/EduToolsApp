@@ -1,5 +1,5 @@
-import { Roles } from '../app/authentication/interfaces/roles.enum';
 import { User } from '../app/authentication/interfaces/user.interface';
+import { Roles } from '../app/shared/interfaces/roles.enum';
 
 export const determinateRole = (user: User): string => {
   // El objeto user tiene 2 propiedades: is_superuser, is_staff

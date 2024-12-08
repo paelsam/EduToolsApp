@@ -7,19 +7,33 @@ import { getCookie } from '../../../helpers/cookiesFunctions';
 import { User } from '../interfaces/user.interface';
 import { LoginRequest } from '../interfaces/login-request.interface';
 import { LoginResponse } from '../interfaces/login-response.interface';
+import { AuthStatus } from '../interfaces/auth-status.enum';
+import { determinateRole } from '../../../helpers/determinateRole';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthenticationService {
-  private readonly baseUrl: string = environment.BACKENG_URL;
+  private readonly baseUrl: string = environment.BACKEND_URL;
   private CSRFToken: string = getCookie('csrftoken') || '';
 
   private _user = signal<User | null>(null);
+  private _role = signal<string | null>(null);
+  private _authStatus = signal<AuthStatus>(AuthStatus.checking);
 
   public user = computed(() => this._user());
+  public role = computed(() => this._role());
+  public authStatus = computed(() => this._authStatus());
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) {
+    this.verifyJWTToken().subscribe();
+  }
+
+  public setAuthentication(response: User): void {
+    this._user.set(response);
+    this._role.set(response.role);
+    this._authStatus.set(AuthStatus.authenticated);
+  }
 
   public loadCSRFToken(): void {
     this.http
@@ -72,7 +86,6 @@ export class AuthenticationService {
       )
       .pipe(
         map((response) => {
-          console.log('Register router API:', response);
           return response;
         })
       );
@@ -98,9 +111,8 @@ export class AuthenticationService {
       })
       .pipe(
         map((response: LoginResponse) => {
-          console.log('Login Route Response:', response);
           localStorage.setItem('token', response.token);
-          this._user.set(response.user);
+          this.setAuthentication({...response.user, role: determinateRole(response.user)});
           return true;
         })
       );
@@ -109,6 +121,8 @@ export class AuthenticationService {
   public logout() {
     localStorage.removeItem('token');
     this._user.set(null);
+    this._role.set(null);
+    this._authStatus.set(AuthStatus.notAuthenticated);
   }
 
   public verifyJWTToken(): Observable<boolean> {
@@ -129,7 +143,7 @@ export class AuthenticationService {
       })
       .pipe(
         map((response) => {
-          this._user.set(response);
+          this.setAuthentication({...response, role: determinateRole(response)});
           return true;
         })
       );
@@ -182,7 +196,6 @@ export class AuthenticationService {
       })
       .pipe(
         map((response) => {
-          console.log('Response ACTIVATE user:', response);
           return true;
         })
       );

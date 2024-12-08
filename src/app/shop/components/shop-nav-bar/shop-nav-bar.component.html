@@ -15,15 +15,17 @@
 
     <!-- Íconos de usuario y carrito -->
     <div class="flex align-items-center justify-content-center">
-      <div>
+      <div class=" text-5xl">
         <p-menu #menu [popup]="true" [model]="menuItems"></p-menu>
-        <button class="p-link layout-topbar-button text-3xl mr-2" (click)="menu.toggle($event)">
-          <i class="pi pi-user"></i>
+        <button class="p-link layout-topbar-button mr-2" (click)="menu.toggle($event)">
+          <i class="pi pi-user text-xl md:text-2xl"></i>
         </button>
       </div>
-      <button class="p-link layout-topbar-button text-3xl ml-2" (click)="openCart()">
-        <i class="pi pi-shopping-cart"></i>
-      </button>
+      <div class=" text-5xl">
+        <button class="p-link layout-topbar-button  ml-2" (click)="openCart()">
+          <i class="pi pi-shopping-cart text-xl md:text-2xl"></i>
+        </button>
+      </div>
     </div>
   </div>
 

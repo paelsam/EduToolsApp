@@ -1,6 +1,14 @@
-import { Component, EventEmitter, HostListener, Input, Output } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  HostListener,
+  Input,
+  Output,
+} from '@angular/core';
 import { Product } from '../../../shared/interfaces/product.interface';
 import { ProductService } from '../../../shared/services/product.service';
+import { AuthenticationService } from '../../../authentication/services/authentication.service';
+import { AuthStatus } from '../../../authentication/interfaces/auth-status.enum';
 
 @Component({
   selector: 'app-shop-cart',
@@ -16,7 +24,12 @@ export class ShopCartComponent {
 
   products!: Product[];
 
-  constructor(private productService: ProductService) {
+  public isUserAuthenticated = this.authenticationService.authStatus() === AuthStatus.authenticated;
+
+  constructor(
+    private productService: ProductService,
+    private authenticationService: AuthenticationService
+  ) {
     this.updateScreenSize();
   }
 
