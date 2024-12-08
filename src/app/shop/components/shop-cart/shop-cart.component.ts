@@ -16,7 +16,9 @@ export class ShopCartComponent {
 
   products!: Product[];
 
-  constructor(private productService: ProductService) {}
+  constructor(private productService: ProductService) {
+    this.updateScreenSize();
+  }
 
   ngOnInit() {
     this.productService
