@@ -5,6 +5,7 @@ import { CommonModule } from '@angular/common';
 import { ButtonModule } from 'primeng/button';
 import { CheckboxModule } from 'primeng/checkbox';
 import { FormsModule } from '@angular/forms';
+import { ToolbarModule } from 'primeng/toolbar'; 
 import { PasswordModule } from 'primeng/password';
 import { InputTextModule } from 'primeng/inputtext';
 import { BadgeModule } from 'primeng/badge';
@@ -18,6 +19,9 @@ import { ToastModule } from 'primeng/toast';
 import { DataViewModule } from 'primeng/dataview';
 import { TagModule } from 'primeng/tag';
 import { MenuModule } from 'primeng/menu';
+import { FileUploadModule } from 'primeng/fileupload'; 
+import { TableModule } from 'primeng/table'; 
+import { RatingModule } from 'primeng/rating'; 
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { InputOtpModule } from 'primeng/inputotp';
 
@@ -32,9 +36,13 @@ import { InputOtpModule } from 'primeng/inputotp';
     PasswordModule,
     InputTextModule,
     SidebarModule,
+    ToolbarModule,
     BadgeModule,
     RadioButtonModule,
     InputSwitchModule,
+    RatingModule, 
+    FileUploadModule, 
+    TableModule, 
     RippleModule,
     DropdownModule,
     DialogModule,

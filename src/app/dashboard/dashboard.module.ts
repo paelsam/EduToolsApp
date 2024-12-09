@@ -9,6 +9,8 @@ import { DashboardMenuItemComponent } from './components/dashboard-menu-item/das
 import { DashboardLayoutComponent } from './pages/dashboard-layout/dashboard-layout.component';
 import { DashboardSidebarComponent } from './components/dashboard-sidebar/dashboard-sidebar.component';
 import { PrimeNgModule } from '../prime-ng/prime-ng.module';
+import { ListProductComponent } from './pages/list-product/list-product.component';
+import { ListUserComponent } from './pages/list-user/list-user.component';
 
 @NgModule({
   declarations: [
@@ -17,7 +19,9 @@ import { PrimeNgModule } from '../prime-ng/prime-ng.module';
     DashboardTopBarComponent,
     DashboardMenuItemComponent,
     DashboardLayoutComponent,
-    DashboardSidebarComponent
+    DashboardSidebarComponent,
+    ListProductComponent,
+    ListUserComponent
   ],
   imports: [CommonModule, DashboardRoutingModule, PrimeNgModule],
 })

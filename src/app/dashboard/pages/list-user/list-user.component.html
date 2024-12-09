@@ -1,0 +1,22 @@
+<div class="card">
+    <p-table [value]="customers" [paginator]="true" [rows]="10" [loading]="loading">
+        <ng-template pTemplate="header">
+            <tr>
+                <th>ID</th>
+                <th>Rol</th>
+                <th>Correo</th>
+                <th>Contraseña</th>
+                <th>Nombre</th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-user>
+            <tr>
+                <td>{{ user.id }}</td>
+                <td>{{ user.role }}</td>
+                <td>{{ user.email }}</td>
+                <td>{{ user.password }}</td>
+                <td>{{ user.name }}</td>
+            </tr>
+        </ng-template>
+    </p-table>
+</div>
