@@ -19,45 +19,12 @@ export class AppComponent implements OnInit {
     private primengConfig: PrimeNGConfig,
     private authenticationService: AuthenticationService,
     private networkService: NetworkService,
-    private messageService: MessageService,
-    private router: Router
+    private messageService: MessageService
   ) {}
 
-  public finishedAuthCheck = computed<boolean>(() => {
-    if (this.authenticationService.authStatus() === 'checking') {
-      return false;
-    }
-    return true;
-  });
-
-  // public authStatusChangedEffect = effect(() => {
-  //   console.log(this.authenticationService.authStatus());
-
-  //   switch (this.authenticationService.authStatus()) {
-  //     case AuthStatus.checking:
-  //       break;
-  //     case AuthStatus.authenticated:
-  //       console.log('Rol del usuario:', this.authenticationService.role());
-  //       if (
-  //         this.authenticationService.role() === Roles.ADMIN ||
-  //         this.authenticationService.role() === Roles.STAFF
-  //       ) {
-  //         this.router.navigate(['/dashboard']);
-  //       }
-  //       if (this.authenticationService.role() === Roles.CLIENT) {
-  //         //! No necesariamente tiene que ser /store
-  //         //! Arrerglar para que redireccione a la página correcta
-  //         //! En base al las páginas que puede ver el cliente
-  //         this.router.navigate(['/store']);
-  //       }
-  //       break;
-  //     case AuthStatus.notAuthenticated:
-  //       this.router.navigate(['/store']);
-  //       break;
-  //   }
-  // });
-
   ngOnInit() {
+    console.log('App iniciada');
+    console.log(this.authenticationService.authStatus());
     this.primengConfig.ripple = true;
     if (!getCookie('csrftoken')) {
       this.authenticationService.loadCSRFToken();

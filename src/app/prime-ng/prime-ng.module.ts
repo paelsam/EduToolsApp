@@ -20,6 +20,8 @@ import { TagModule } from 'primeng/tag';
 import { MenuModule } from 'primeng/menu';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { InputOtpModule } from 'primeng/inputotp';
+import { ConfirmPopupModule } from 'primeng/confirmpopup';
+import { InputNumberModule } from 'primeng/inputnumber';
 
 @NgModule({
   declarations: [],
@@ -44,6 +46,8 @@ import { InputOtpModule } from 'primeng/inputotp';
     MenuModule,
     ProgressSpinnerModule,
     InputOtpModule,
+    ConfirmPopupModule,
+    InputNumberModule,
   ],
 })
 export class PrimeNgModule {}

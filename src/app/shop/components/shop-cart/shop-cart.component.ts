@@ -9,6 +9,7 @@ import { Product } from '../../../shared/interfaces/product.interface';
 import { ProductService } from '../../../shared/services/product.service';
 import { AuthenticationService } from '../../../authentication/services/authentication.service';
 import { AuthStatus } from '../../../authentication/interfaces/auth-status.enum';
+import { InventoryStatus } from '../../interfaces/inventory-status.enum';
 
 @Component({
   selector: 'app-shop-cart',
@@ -34,20 +35,19 @@ export class ShopCartComponent {
   }
 
   ngOnInit() {
-    this.productService
-      .getProducts()
-      .then((data) => (this.products = data.slice(0, 12)));
+    console.log('isUserAuthenticated', this.isUserAuthenticated);
+    console.log('Carrito de compras');
   }
 
   getSeverity(product: Product) {
-    switch (product.inventoryStatus?.value) {
-      case 'INSTOCK':
+    switch (product.inventoryStatus) {
+      case InventoryStatus.EN_STOCK:
         return 'success';
 
-      case 'LOWSTOCK':
+      case InventoryStatus.BAJO_STOCK:
         return 'warning';
 
-      case 'OUTOFSTOCK':
+      case InventoryStatus.FUERA_DE_STOCK:
         return 'danger';
 
       default:

@@ -23,8 +23,6 @@ export class VerifyUserComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    console.log('VerifyUserComponent initialized');
-
     this.loadingService.loading$.subscribe((loading) => {
       this.loading = loading;
     });

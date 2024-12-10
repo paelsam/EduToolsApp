@@ -9,13 +9,14 @@ import { LoginRequest } from '../interfaces/login-request.interface';
 import { LoginResponse } from '../interfaces/login-response.interface';
 import { AuthStatus } from '../interfaces/auth-status.enum';
 import { determinateRole } from '../../../helpers/determinateRole';
+import { Router } from '@angular/router';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthenticationService {
   private readonly baseUrl: string = environment.BACKEND_URL;
-  private CSRFToken: string = getCookie('csrftoken') || '';
+  private _CSRFToken: string = getCookie('csrftoken') || '';
 
   private _user = signal<User | null>(null);
   private _role = signal<string | null>(null);
@@ -24,8 +25,9 @@ export class AuthenticationService {
   public user = computed(() => this._user());
   public role = computed(() => this._role());
   public authStatus = computed(() => this._authStatus());
+  public CSRFToken = computed(() => this._CSRFToken);
 
-  constructor(private http: HttpClient) {
+  constructor(private http: HttpClient, private router: Router) {
     this.verifyJWTToken().subscribe();
   }
 
@@ -41,7 +43,7 @@ export class AuthenticationService {
         withCredentials: true,
       })
       .subscribe((response) => {
-        this.CSRFToken = response.csrfToken;
+        this._CSRFToken = response.csrfToken;
       });
   }
 
@@ -52,7 +54,7 @@ export class AuthenticationService {
     return this.http
       .post(`${this.baseUrl}/api/user/recaptcha-verify/`, formData, {
         withCredentials: true,
-        headers: new HttpHeaders({ 'X-CSRFToken': this.CSRFToken }),
+        headers: new HttpHeaders({ 'X-CSRFToken': this._CSRFToken }),
       })
       .pipe(
         map(() => {
@@ -81,7 +83,7 @@ export class AuthenticationService {
         formData,
         {
           withCredentials: true,
-          headers: new HttpHeaders({ 'X-CSRFToken': this.CSRFToken }),
+          headers: new HttpHeaders({ 'X-CSRFToken': this._CSRFToken }),
         }
       )
       .pipe(
@@ -107,7 +109,7 @@ export class AuthenticationService {
     return this.http
       .post<LoginResponse>(`${this.baseUrl}/api/user/login/`, formData, {
         withCredentials: true,
-        headers: new HttpHeaders({ 'X-CSRFToken': this.CSRFToken }),
+        headers: new HttpHeaders({ 'X-CSRFToken': this._CSRFToken }),
       })
       .pipe(
         map((response: LoginResponse) => {
@@ -137,7 +139,7 @@ export class AuthenticationService {
       .get<User>(`${this.baseUrl}/api/user/`, {
         withCredentials: true,
         headers: new HttpHeaders({
-          'X-CSRFToken': this.CSRFToken,
+          'X-CSRFToken': this._CSRFToken,
           Authorization: `Bearer ${token}`,
         }),
       })
@@ -154,7 +156,7 @@ export class AuthenticationService {
       .get<boolean>(`${this.baseUrl}/api/user/2fa/`, {
         withCredentials: true,
         headers: new HttpHeaders({
-          'X-CSRFToken': this.CSRFToken,
+          'X-CSRFToken': this._CSRFToken,
           Authorization: `Bearer ${localStorage.getItem('token')}`,
         }),
       })
@@ -173,7 +175,7 @@ export class AuthenticationService {
       .post<boolean>(`${this.baseUrl}/api/user/2fa/`, formData, {
         withCredentials: true,
         headers: new HttpHeaders({
-          'X-CSRFToken': this.CSRFToken,
+          'X-CSRFToken': this._CSRFToken,
           Authorization: `Bearer ${localStorage.getItem('token')}`,
         }),
       })
@@ -192,7 +194,7 @@ export class AuthenticationService {
     return this.http
       .post<boolean>(`${this.baseUrl}/api/user/activate/`, formData, {
         withCredentials: true,
-        headers: new HttpHeaders({ 'X-CSRFToken': this.CSRFToken }),
+        headers: new HttpHeaders({ 'X-CSRFToken': this._CSRFToken }),
       })
       .pipe(
         map((response) => {

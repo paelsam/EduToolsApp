@@ -1,4 +1,4 @@
-import { importProvidersFrom, NgModule } from '@angular/core';
+import { APP_INITIALIZER, importProvidersFrom, NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 
 import { AppRoutingModule } from './app-routing.module';
@@ -8,7 +8,14 @@ import { HTTP_INTERCEPTORS, HttpClientModule, HttpClientXsrfModule } from '@angu
 import { PrimeNgModule } from './prime-ng/prime-ng.module';
 import { MessageService } from 'primeng/api';
 import { HttpErrorInterceptorService } from './shared/interceptors/http-error.interceptor';
+import { AuthenticationService } from './authentication/services/authentication.service';
+import { User } from './authentication/interfaces/user.interface';
+import { Observable } from 'rxjs';
 
+//! Inicialización del servicio de autenticación
+export function initializeApp(authService: AuthenticationService): () => Observable<boolean> {
+  return () => authService.verifyJWTToken();
+}
 
 
 @NgModule({
@@ -32,6 +39,12 @@ import { HttpErrorInterceptorService } from './shared/interceptors/http-error.in
     {
       provide: HTTP_INTERCEPTORS,
       useClass: HttpErrorInterceptorService,
+      multi: true
+    },
+    {
+      provide: APP_INITIALIZER,
+      useFactory: initializeApp,
+      deps: [AuthenticationService],
       multi: true
     },
     MessageService

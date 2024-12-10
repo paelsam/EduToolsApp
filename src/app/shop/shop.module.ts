@@ -11,6 +11,7 @@ import { PrimeNgModule } from '../prime-ng/prime-ng.module';
 import { ShopFooterComponent } from './components/shop-footer/shop-footer.component';
 import { ShopCartComponent } from './components/shop-cart/shop-cart.component';
 import { ProductService } from '../shared/services/product.service';
+import { ConfirmationService } from 'primeng/api';
 
 
 
@@ -30,6 +31,6 @@ import { ProductService } from '../shared/services/product.service';
     ShopRoutingModule,
     PrimeNgModule
   ],
-  providers: [ProductService]
+  providers: [ProductService, ConfirmationService]
 })
 export class ShopModule { }

@@ -98,7 +98,6 @@ export class LoginPageComponent implements OnInit {
     this.authenticationService.verify2FA(String(this.otpValue))
       .subscribe((response) => {
         this.loadingService.setLoading(false);
-        console.log('Verificación de 2FA:', response);
         this.router.navigate(['/store']);
       });
   }
