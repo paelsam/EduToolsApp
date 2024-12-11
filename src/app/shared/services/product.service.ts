@@ -53,7 +53,6 @@ export class ProductService {
               parseInt(product.stock as string)
             );
           });
-          console.log(products);
           return products;
         })
       );
@@ -150,7 +149,8 @@ export class ProductService {
     if (product.is_favorite) {
       return this.http
         .delete<any>(
-          `${this.baseUrl}/api/productmanager/favoriteproduct/${product.id}/`,
+          //? Ese 1 puede ser cualquier número, no afecta la petición
+          `${this.baseUrl}/api/productmanager/favoriteproduct/1/?product_id=${product.id}&user_id=${(this.authenticationService.user() as User).id}`,
           {
             withCredentials: true,
             headers: new HttpHeaders({

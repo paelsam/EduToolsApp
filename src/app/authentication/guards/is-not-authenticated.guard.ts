@@ -12,9 +12,6 @@ export const isNotAuthenticatedGuard: CanActivateFn = (route, state) => {
 
   // Si no está autenticado, solo puede acceder a la páginas de auth y a la página de inicio de la tienda
   if (authenticationService.authStatus() === AuthStatus.notAuthenticated) {
-
-    console.log('No autenticado', 'Puede acceder a la página de login o registro');
-
     // También funcione para la página de verificación de correo
     if (
       state.url === '/store' ||
@@ -22,14 +19,9 @@ export const isNotAuthenticatedGuard: CanActivateFn = (route, state) => {
       state.url === '/auth/regiser' ||
       state.url.includes('/auth/verify-user')
     ) {
-      console.log('Está en la página de login o registro', 'Permitiendo acceso');
       return true;
     }
-
-    console.log('No está en la página de login o registro', 'Redirigiendo a la página de inicio de la tienda');
     return false;
   }
-
-  console.log('Ya está autenticado', 'Redirigiendo a la página de inicio de la tienda');
   return true;
 };

@@ -22,7 +22,6 @@ export const isAuthenticatedGuard: CanActivateFn = (route, state) => {
       // No hacer nada
       if (state.url === '/dashboard' || state.url === '/store') return true;
     } else {
-      console.log('No autorizado', 'Solo los administradores y el staff pueden acceder a la página de dashboard');
       router.navigate(['/store']);
     }
     return true;

@@ -24,8 +24,6 @@ export class AppComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    console.log('App iniciada');
-    console.log(this.authenticationService.authStatus());
     this.primengConfig.ripple = true;
     if (!getCookie('csrftoken')) {
       this.authenticationService.loadCSRFToken();

@@ -3,16 +3,12 @@ import { ConfirmationService, MessageService, SelectItem } from 'primeng/api';
 import { DataView } from 'primeng/dataview';
 import { ProductService } from '../../../shared/services/product.service';
 import { AuthenticationService } from '../../../authentication/services/authentication.service';
-import { environment } from '../../../../environments/environment.development';
-import { Observable } from 'rxjs';
 import { Product } from '../../../shared/interfaces/product.interface';
 import { InventoryStatus } from '../../interfaces/inventory-status.enum';
-import { InputNumber } from 'primeng/inputnumber';
-import { HttpClient } from '@angular/common/http';
-import { Cart } from '../../interfaces/cart.interface';
 import { LoadingService } from '../../../shared/services/loading.service';
 import { AuthStatus } from '../../../authentication/interfaces/auth-status.enum';
-import { Category } from '../../../shared/interfaces/category.interface';
+import { environment } from '../../../../environments/environment';
+
 
 @Component({
   selector: 'shop-produts-container',
@@ -105,7 +101,7 @@ export class ShopProdutsContainerComponent implements OnInit {
 
     if (this.authenticationService.user()) {
       this.productService.addFavoriteProduct(product).subscribe((response) => {
-        if (!product.is_favorite) {
+        if (!response || !response.id) {
           this.messageService.add({
             severity: 'success',
             summary: `Producto ${product.name} eliminado de favoritos con éxito`,
@@ -120,6 +116,7 @@ export class ShopProdutsContainerComponent implements OnInit {
         this.updateProducts();
       });
     } else {
+      this.loadingService.setLoading(false);
       this.displayLoginDialog = true;
     }
   }

@@ -4,8 +4,7 @@
     [sortOrder]="sortOrder" layout="grid">
     <ng-template pTemplate="header">
       <div class="flex flex-column md:flex-row md:justify-content-between gap-2">
-        <p-dropdown [options]="sortOptions" placeholder="Ordenar por..."
-          (onChange)="onSortChange($event)"></p-dropdown>
+        <p-dropdown [options]="sortOptions" placeholder="Ordenar por..." (onChange)="onSortChange($event)"></p-dropdown>
         <span class="p-input-icon-left">
           <i class="pi pi-search"></i>
           <input type="search" pInputText placeholder="Buscar por palabra clave" (input)="onFilter(dv, $event)">
@@ -63,9 +62,8 @@
             <div class="flex align-items-center justify-content-between">
               <span class="text-2xl font-semibold">{{product.price | currency}}</span>
               <div class="flex gap-2">
-                <p-button icon="pi pi-heart"
-                [styleClass]="product.is_favorite ? 'surface-200' : ''"
-                [loading]="loading" (onClick)="addToFavorites(product)" [outlined]="true" />
+                <p-button icon="pi pi-heart" [styleClass]="product.is_favorite ? 'surface-200' : ''"
+                  (onClick)="addToFavorites(product)" [outlined]="true" />
                 <p-button icon="pi pi-shopping-cart" (onClick)="openConfirmPopup($event, product)"
                   [disabled]="product.inventoryStatus === inventoryStatus.FUERA_DE_STOCK"></p-button>
               </div>
