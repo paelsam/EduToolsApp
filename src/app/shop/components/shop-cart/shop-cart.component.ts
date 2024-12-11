@@ -3,40 +3,75 @@ import {
   EventEmitter,
   HostListener,
   Input,
+  OnChanges,
   Output,
+  SimpleChanges,
 } from '@angular/core';
 import { Product } from '../../../shared/interfaces/product.interface';
 import { ProductService } from '../../../shared/services/product.service';
 import { AuthenticationService } from '../../../authentication/services/authentication.service';
 import { AuthStatus } from '../../../authentication/interfaces/auth-status.enum';
 import { InventoryStatus } from '../../interfaces/inventory-status.enum';
+import { Cart, ProductElement } from '../../interfaces/cart.interface';
+import { LoadingService } from '../../../shared/services/loading.service';
+import { MessageService } from 'primeng/api';
+import { environment } from '../../../../environments/environment';
 
 @Component({
   selector: 'app-shop-cart',
   templateUrl: './shop-cart.component.html',
   styleUrl: './shop-cart.component.scss',
 })
-export class ShopCartComponent {
+export class ShopCartComponent implements OnChanges {
   @Input() isVisible: boolean = false;
   @Input() isMobile: boolean = false;
   @Output() isVisibleChange = new EventEmitter<boolean>();
 
+  baseUrl = environment.BACKEND_URL;
+
   layout: 'list' | 'grid' = 'list';
 
-  products!: Product[];
+  products!: ProductElement[];
+  cart: Cart = {} as Cart;
+  loading: boolean = false;
 
-  public isUserAuthenticated = this.authenticationService.authStatus() === AuthStatus.authenticated;
+  selectedProductName: string = '';
+
+  public isUserAuthenticated =
+    this.authenticationService.authStatus() === AuthStatus.authenticated;
 
   constructor(
     private productService: ProductService,
-    private authenticationService: AuthenticationService
+    private authenticationService: AuthenticationService,
+    private loadingService: LoadingService,
+    private messageService: MessageService
   ) {
     this.updateScreenSize();
   }
 
+  ngOnChanges(changes: SimpleChanges): void {
+    if (this.authenticationService.authStatus() === AuthStatus.authenticated) {
+      this.updateCart();
+    }
+  }
+
   ngOnInit() {
-    console.log('isUserAuthenticated', this.isUserAuthenticated);
-    console.log('Carrito de compras');
+    if (this.authenticationService.authStatus() === AuthStatus.authenticated) {
+      this.updateCart();
+    }
+
+    this.loadingService.loading$.subscribe((loading) => {
+      this.loading = loading;
+    });
+  }
+
+  updateCart() {
+    this.productService.getCart().subscribe((cart) => {
+      this.cart = cart;
+      this.products = cart.products.map((product) => {
+        return { ...product, disabled: false };
+      });
+    });
   }
 
   getSeverity(product: Product) {
@@ -68,5 +103,21 @@ export class ShopCartComponent {
   handleClose() {
     this.isVisible = false;
     this.isVisibleChange.emit(this.isVisible);
+  }
+
+  onDeleteProductCart(product: ProductElement) {
+    product.disabled = true;
+    this.selectedProductName = product.product_name;
+
+    this.loadingService.setLoading(true);
+    this.productService
+      .deleteProductCart(product.id as number)
+      .subscribe((response) => {
+        this.messageService.add({
+          severity: 'success',
+          summary: `Producto ${product.product_name} eliminado con éxito!`,
+        });
+        this.updateCart();
+      });
   }
 }

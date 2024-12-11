@@ -49,7 +49,10 @@ export class ShopNavBarComponent {
     {
       label: 'Cerrar sesión',
       icon: 'pi pi-fw pi-power-off',
-      command: () => this.authenticationService.logout(),
+      command: () => {
+        this.authenticationService.logout();
+        this.router.navigate(['/auth']);
+      },
       visible:
         this.authenticationService.authStatus() === AuthStatus.authenticated,
     },

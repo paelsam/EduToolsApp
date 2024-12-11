@@ -3,7 +3,7 @@ import { MessageService, PrimeNGConfig } from 'primeng/api';
 import { AuthenticationService } from './authentication/services/authentication.service';
 import { getCookie } from '../helpers/cookiesFunctions';
 import { NetworkService } from './shared/services/network.service';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { AuthStatus } from './authentication/interfaces/auth-status.enum';
 import { Roles } from './shared/interfaces/roles.enum';
 
@@ -19,7 +19,8 @@ export class AppComponent implements OnInit {
     private primengConfig: PrimeNGConfig,
     private authenticationService: AuthenticationService,
     private networkService: NetworkService,
-    private messageService: MessageService
+    private messageService: MessageService,
+    private route: ActivatedRoute,
   ) {}
 
   ngOnInit() {
@@ -40,6 +41,16 @@ export class AppComponent implements OnInit {
             ? 'Has recuperado la conexión a internet'
             : 'No tienes conexión a internet',
         });
+      }
+    });
+
+    // Scroll to fragment
+    this.route.fragment.subscribe((fragment) => {
+      if (fragment) {
+        const element = document.getElementById(fragment);
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth' });
+        }
       }
     });
   }

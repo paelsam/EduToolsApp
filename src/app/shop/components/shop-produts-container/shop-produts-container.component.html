@@ -1,14 +1,14 @@
 <div class="container py-8 px-4 lg:px-0" id="shop-products">
   <h3>Productos Universitarios</h3>
-  <p-dataView #dv [value]="products" [paginator]="true" [rows]="9" filterBy="name" [sortField]="sortField"
+  <p-dataView #dv [value]="products" [paginator]="true" [rows]="9" filterBy="name,categoryName" [sortField]="sortField"
     [sortOrder]="sortOrder" layout="grid">
     <ng-template pTemplate="header">
       <div class="flex flex-column md:flex-row md:justify-content-between gap-2">
-        <p-dropdown [options]="sortOptions" placeholder="Ordenar por precio"
+        <p-dropdown [options]="sortOptions" placeholder="Ordenar por..."
           (onChange)="onSortChange($event)"></p-dropdown>
         <span class="p-input-icon-left">
           <i class="pi pi-search"></i>
-          <input type="search" pInputText placeholder="Buscar por normbre" (input)="onFilter(dv, $event)">
+          <input type="search" pInputText placeholder="Buscar por palabra clave" (input)="onFilter(dv, $event)">
         </span>
         <p-dataViewLayoutOptions></p-dataViewLayoutOptions>
       </div>
@@ -31,28 +31,10 @@
             class="flex flex-row md:flex-column justify-content-between w-full md:w-auto align-items-center md:align-items-end mt-5 md:mt-0">
             <span class="text-2xl font-semibold mb-2 align-self-center md:align-self-end">{{product.price |
               currency}}</span>
-            <p-button icon="pi pi-shopping-cart" label="Add to Cart" (onClick)="openConfirmPopup($event, product)"
+            <p-button icon="pi pi-shopping-cart" label="Añadir al carrito" (onClick)="openConfirmPopup($event, product)"
               [disabled]="product.inventoryStatus === inventoryStatus.FUERA_DE_STOCK"
               styleClass="mb-2 p-button-sm"></p-button>
-            <!-- Confirm Popup component con input number en el cual se pueda seleccionar la cantidad de producto que se quiera-->
-            <!-- Añadir al carrito -->
-            <p-confirmPopup #cp>
-              <ng-template pTemplate="headless">
-                <div class="flex flex-column rounded p-4">
-                  <span class="text-xl font-semibold"> {{ selectedProductName }}</span>
-                  <p class="mb-3">¿Cuántas unidades de este producto deseas añadir al carrito?</p>
-                  <p-inputNumber [(ngModel)]="quantity" mode="decimal" [showButtons]="true" inputId="minmax-buttons"
-                    [min]="0" [max]="100" />
-                  <div class="flex items-center gap-2 mt-4">
-                    <p-button (onClick)="cp.reject()" label="Cancelar" [text]="true" icon="pi pi-times" size="small"
-                      severity="secondary" />
-                    <p-button (onClick)="cp.accept()" label="Añadir al carrito" icon="pi pi-shopping-cart"
-                      size="small" />
-                  </div>
-                </div>
-              </ng-template>
-            </p-confirmPopup>
-            <!-- ------ -->
+
             <p-button icon="pi pi-heart" [outlined]="true" (onClick)="addToFavorites(product)" />
             <span
               [class]="'product-badge ' + getStatusClass(product.inventoryStatus)">{{product.inventoryStatus}}</span>
@@ -81,34 +63,16 @@
             <div class="flex align-items-center justify-content-between">
               <span class="text-2xl font-semibold">{{product.price | currency}}</span>
               <div class="flex gap-2">
-                <p-button icon="pi pi-heart" (onClick)="addToFavorites(product)" [outlined]="true" />
+                <p-button icon="pi pi-heart"
+                [styleClass]="product.is_favorite ? 'surface-200' : ''"
+                [loading]="loading" (onClick)="addToFavorites(product)" [outlined]="true" />
                 <p-button icon="pi pi-shopping-cart" (onClick)="openConfirmPopup($event, product)"
                   [disabled]="product.inventoryStatus === inventoryStatus.FUERA_DE_STOCK"></p-button>
-                <!-- Confirm Popup component con input number en el cual se pueda seleccionar la cantidad de producto que se quiera-->
-                <!-- Añadir al carrito -->
-                <p-confirmPopup #cp>
-                  <ng-template pTemplate="headless">
-                    <div class="flex flex-column rounded p-4" style="max-width: 23rem;">
-                      <span class="text-xl font-semibold text-center"> {{ selectedProductName }}</span>
-                      <p class="my-3">¿Cuántas unidades de este producto deseas añadir al carrito?</p>
-                      <p-inputNumber [(ngModel)]="quantity" mode="decimal" [showButtons]="true" inputId="minmax-buttons"
-                        [min]="0" [max]="100" styleClass="w-full" />
-                      <div class="flex items-center justify-content-center gap-2 mt-4">
-                        <p-button (onClick)="cp.reject()" label="Cancelar" [text]="true" icon="pi pi-times" size="small"
-                          severity="secondary" />
-                        <p-button (onClick)="cp.accept()" label="Añadir al carrito" icon="pi pi-shopping-cart"
-                          size="small" />
-                      </div>
-                    </div>
-                  </ng-template>
-                </p-confirmPopup>
-                <!-- ------ -->
               </div>
             </div>
           </div>
         </div>
       </div>
-
 
     </ng-template>
   </p-dataView>
@@ -122,4 +86,24 @@
       <p-button label="Aceptar" (onClick)="displayLoginDialog = false"></p-button>
     </p-footer>
   </p-dialog>
+
+  <!-- Confirm Popup component con input number en el cual se pueda seleccionar la cantidad de producto que se quiera-->
+  <!-- Añadir al carrito -->
+  <p-confirmPopup #cp1>
+    <ng-template pTemplate="headless">
+      <div class="flex flex-column rounded p-4" style="max-width: 23rem;">
+        <span class="text-xl font-semibold text-center"> {{ selectedProductName }}</span>
+        <p class="my-3">¿Cuántas unidades de este producto deseas añadir al carrito?</p>
+        <p-inputNumber [(ngModel)]="quantity" mode="decimal" [showButtons]="true" inputId="minmax-buttons" [min]="0"
+          [max]="selectedProductStock" styleClass="w-full" />
+        <div class="flex items-center justify-content-center gap-2 mt-4">
+          <p-button (onClick)="cp1.reject()" label="Cancelar" [text]="true" icon="pi pi-times" size="small"
+            severity="secondary" />
+          <p-button (onClick)="cp1.accept()" [loading]="loading" label="Añadir al carrito" icon="pi pi-shopping-cart"
+            size="small" />
+        </div>
+      </div>
+    </ng-template>
+  </p-confirmPopup>
+  <!-- ------ -->
 </div>
