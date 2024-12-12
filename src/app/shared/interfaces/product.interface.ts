@@ -8,9 +8,9 @@ export interface Product {
   description?: string;
   price:       string;
   stock?:       string;
-  category?:    Category | number;
+  category:    Category | number;
   categoryName?: string;
   image?:       string;
   is_favorite?: boolean;
-  inventoryStatus?: InventoryStatus;
+  inventoryStatus: InventoryStatus;
 }

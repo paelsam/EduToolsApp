@@ -181,6 +181,50 @@ export class ProductService {
     }
   }
 
+  deleteProduct(id: number) {
+    return this.http
+      .delete<{ details: string }>(
+        `${this.baseUrl}/api/productmanager/product/${id}/`,
+        {
+          withCredentials: true,
+          headers: new HttpHeaders({
+            'X-CSRFToken': this.authenticationService.CSRFToken(),
+            Authorization: `Bearer ${localStorage.getItem('token')}`,
+          }),
+        }
+      )
+      .pipe((result) => {
+        return result;
+      });
+  }
+
+  editProduct(product: Product) {
+    const formData = new FormData();
+    formData.append('name', product.name);
+    formData.append('price', product.price.toString());
+    formData.append('stock', (product.stock as string).toString());
+    formData.append('description', (product.description as string));
+    formData.append('category', (product.category as number).toString());
+    formData.append('id', (product.id as number).toString());
+    // formData.append('image', product.image as string);
+
+    return this.http
+      .patch<Product>(
+        `${this.baseUrl}/api/productmanager/product/${product.id}/`,
+        formData,
+        {
+          withCredentials: true,
+          headers: new HttpHeaders({
+            'X-CSRFToken': this.authenticationService.CSRFToken(),
+            Authorization: `Bearer ${localStorage.getItem('token')}`,
+          }),
+        }
+      )
+      .pipe((result) => {
+        return result;
+      });
+  }
+
   determinateStockStatus(stock: number): InventoryStatus {
     if (stock === 0) {
       return InventoryStatus.FUERA_DE_STOCK;

@@ -5,7 +5,7 @@ import { CommonModule } from '@angular/common';
 import { ButtonModule } from 'primeng/button';
 import { CheckboxModule } from 'primeng/checkbox';
 import { FormsModule } from '@angular/forms';
-import { ToolbarModule } from 'primeng/toolbar'; 
+import { ToolbarModule } from 'primeng/toolbar';
 import { PasswordModule } from 'primeng/password';
 import { InputTextModule } from 'primeng/inputtext';
 import { BadgeModule } from 'primeng/badge';
@@ -19,14 +19,15 @@ import { ToastModule } from 'primeng/toast';
 import { DataViewModule } from 'primeng/dataview';
 import { TagModule } from 'primeng/tag';
 import { MenuModule } from 'primeng/menu';
-import { FileUploadModule } from 'primeng/fileupload'; 
-import { TableModule } from 'primeng/table'; 
-import { RatingModule } from 'primeng/rating'; 
+import { FileUploadModule } from 'primeng/fileupload';
+import { TableModule } from 'primeng/table';
+import { RatingModule } from 'primeng/rating';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { InputOtpModule } from 'primeng/inputotp';
 import { ConfirmPopupModule } from 'primeng/confirmpopup';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
+import { InputTextarea, InputTextareaModule } from 'primeng/inputtextarea';
 
 @NgModule({
   declarations: [],
@@ -43,9 +44,9 @@ import { ConfirmDialogModule } from 'primeng/confirmdialog';
     BadgeModule,
     RadioButtonModule,
     InputSwitchModule,
-    RatingModule, 
-    FileUploadModule, 
-    TableModule, 
+    RatingModule,
+    FileUploadModule,
+    TableModule,
     RippleModule,
     DropdownModule,
     DialogModule,
@@ -58,6 +59,7 @@ import { ConfirmDialogModule } from 'primeng/confirmdialog';
     ConfirmPopupModule,
     InputNumberModule,
     ConfirmDialogModule,
+    InputTextareaModule,
   ],
 })
 export class PrimeNgModule {}
