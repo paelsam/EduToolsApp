@@ -5,7 +5,7 @@ import { ShopLayoutPageComponent } from './pages/shop-layout-page/shop-layout-pa
 const routes: Routes = [
   {
     path: '',
-    component: ShopLayoutPageComponent
+    component: ShopLayoutPageComponent,
   },
 ];
 

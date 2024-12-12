@@ -1,13 +1,14 @@
 <div class="container py-8 px-4 lg:px-0" id="shop-products">
   <h3>Productos Universitarios</h3>
-  <p-dataView #dv [value]="products" [paginator]="true" [rows]="9" filterBy="name" [sortField]="sortField" [sortOrder]="sortOrder" layout="grid">
+  <p-dataView #dv [value]="products" [paginator]="true" [rows]="9" filterBy="name,categoryName" [sortField]="sortField"
+    [sortOrder]="sortOrder" layout="grid">
     <ng-template pTemplate="header">
       <div class="flex flex-column md:flex-row md:justify-content-between gap-2">
-        <p-dropdown [options]="sortOptions" placeholder="Sort By Price" (onChange)="onSortChange($event)"></p-dropdown>
+        <p-dropdown [options]="sortOptions" placeholder="Ordenar por..." (onChange)="onSortChange($event)"></p-dropdown>
         <span class="p-input-icon-left">
-                        <i class="pi pi-search"></i>
-                        <input type="search" pInputText placeholder="Search by Name" (input)="onFilter(dv, $event)">
-                    </span>
+          <i class="pi pi-search"></i>
+          <input type="search" pInputText placeholder="Buscar por palabra clave" (input)="onFilter(dv, $event)">
+        </span>
         <p-dataViewLayoutOptions></p-dataViewLayoutOptions>
       </div>
     </ng-template>
@@ -15,20 +16,27 @@
     <ng-template let-products pTemplate="listItem">
       <div class="col-12" *ngFor="let product of products">
         <div class="flex flex-column md:flex-row align-items-center p-3 w-full">
-          <img [src]="'assets/demo/images/product/' + product.image" [alt]="product.name" class="my-4 md:my-0 w-9 md:w-10rem shadow-2 mr-5"/>
+          <img [src]="backendUrl + product.image" [alt]="product.name"
+            class="my-4 md:my-0 w-9 md:w-10rem shadow-2 mr-5" />
           <div class="flex-1 flex flex-column align-items-center text-center md:text-left">
             <div class="font-bold text-2xl">{{product.name}}</div>
             <div class="mb-2">{{product.description}}</div>
             <div class="flex align-items-center mt-2">
               <i class="pi pi-tag mr-2"></i>
-              <span class="font-semibold">{{product.category}}</span>
+              <span class="font-semibold">{{product.category.name}}</span>
             </div>
           </div>
-          <div class="flex flex-row md:flex-column justify-content-between w-full md:w-auto align-items-center md:align-items-end mt-5 md:mt-0">
-            <span class="text-2xl font-semibold mb-2 align-self-center md:align-self-end">${{product.price}}</span>
-            <p-button icon="pi pi-shopping-cart" label="Add to Cart" [disabled]="product.inventoryStatus === 'OUTOFSTOCK'" styleClass="mb-2 p-button-sm"></p-button>
-            <p-button icon="pi pi-heart" [outlined]="true" />
-            <span [class]="'product-badge status-' + product.inventoryStatus.toLowerCase()">{{product.inventoryStatus}}</span>
+          <div
+            class="flex flex-row md:flex-column justify-content-between w-full md:w-auto align-items-center md:align-items-end mt-5 md:mt-0">
+            <span class="text-2xl font-semibold mb-2 align-self-center md:align-self-end">{{product.price |
+              currency}}</span>
+            <p-button icon="pi pi-shopping-cart" label="Añadir al carrito" (onClick)="openConfirmPopup($event, product)"
+              [disabled]="product.inventoryStatus === inventoryStatus.FUERA_DE_STOCK"
+              styleClass="mb-2 p-button-sm"></p-button>
+
+            <p-button icon="pi pi-heart" [outlined]="true" (onClick)="addToFavorites(product)" />
+            <span
+              [class]="'product-badge ' + getStatusClass(product.inventoryStatus)">{{product.inventoryStatus}}</span>
           </div>
         </div>
       </div>
@@ -36,30 +44,64 @@
 
     <ng-template let-products pTemplate="gridItem">
       <div class="grid grid-nogutter">
-      <div class="col-12 md:col-4" *ngFor="let product of products">
-        <div class="card m-3 border-1 surface-border">
-          <div class="flex flex-wrap gap-2 align-items-center justify-content-between mb-2">
-            <div class="flex align-items-center">
-              <i class="pi pi-tag mr-2"></i>
-              <span class="font-semibold">{{product.category}}</span>
+        <div class="col-12 md:col-4" *ngFor="let product of products">
+          <div class="card m-3 border-1 surface-border">
+            <div class="flex flex-wrap gap-2 align-items-center justify-content-between mb-2">
+              <div class="flex align-items-center">
+                <i class="pi pi-tag mr-2"></i>
+                <span class="font-semibold">{{product.category.name}}</span>
+              </div>
+              <span
+                [class]="'product-badge ' + getStatusClass(product.inventoryStatus)">{{product.inventoryStatus}}</span>
             </div>
-            <span [class]="'product-badge status-' + product.inventoryStatus.toLowerCase()">{{product.inventoryStatus}}</span>
-          </div>
-          <div class="flex flex-column align-items-center text-center mb-3">
-            <img [src]="'assets/demo/images/product/' + product.image" [alt]="product.name" class="w-9 shadow-2 my-3 mx-0"/>
-            <div class="text-2xl font-bold">{{product.name}}</div>
-            <div class="mb-3">{{product.description}}</div>
-          </div>
-          <div class="flex align-items-center justify-content-between">
-            <span class="text-2xl font-semibold">${{product.price}}</span>
-            <div class="flex gap-2">
-              <p-button icon="pi pi-heart" [outlined]="true" />
-              <p-button icon="pi pi-shopping-cart" [disabled]="product.inventoryStatus === 'OUTOFSTOCK'"></p-button>
+            <div class="flex flex-column align-items-center text-center mb-3 gap-2">
+              <img [src]="backendUrl + '/' + product.image" [alt]="product.name" class="w-9 shadow-2 my-3 mx-0" />
+              <div class="text-2xl font-bold" style="max-height: 6rem;">{{product.name}}</div>
+              <div class="flex align-items-center mb-3" style="min-height: 5rem;">{{product.description}}</div>
+            </div>
+            <div class="flex align-items-center justify-content-between">
+              <span class="text-2xl font-semibold">{{product.price | currency}}</span>
+              <div class="flex gap-2">
+                <p-button icon="pi pi-heart" [styleClass]="product.is_favorite ? 'surface-200' : ''"
+                  (onClick)="addToFavorites(product)" [outlined]="true" />
+                <p-button icon="pi pi-shopping-cart" (onClick)="openConfirmPopup($event, product)"
+                  [disabled]="product.inventoryStatus === inventoryStatus.FUERA_DE_STOCK"></p-button>
+              </div>
             </div>
           </div>
         </div>
       </div>
-      </div>
+
     </ng-template>
   </p-dataView>
+
+  <!-- Dialog que indique que se debe iniciar sesión en caso de que se quiera usar las -->
+  <!-- funcionalidades de agregar al carrito o a favoritos -->
+  <p-dialog header="Iniciar Sesión" [(visible)]="displayLoginDialog" [modal]="true" [closable]="true"
+    [resizable]="false" [style]="{width: '450px'}">
+    <p>Para poder agregar productos al carrito o a favoritos, por favor inicia sesión.</p>
+    <p-footer>
+      <p-button label="Aceptar" (onClick)="displayLoginDialog = false"></p-button>
+    </p-footer>
+  </p-dialog>
+
+  <!-- Confirm Popup component con input number en el cual se pueda seleccionar la cantidad de producto que se quiera-->
+  <!-- Añadir al carrito -->
+  <p-confirmPopup #cp1>
+    <ng-template pTemplate="headless">
+      <div class="flex flex-column rounded p-4" style="max-width: 23rem;">
+        <span class="text-xl font-semibold text-center"> {{ selectedProductName }}</span>
+        <p class="my-3">¿Cuántas unidades de este producto deseas añadir al carrito?</p>
+        <p-inputNumber [(ngModel)]="quantity" mode="decimal" [showButtons]="true" inputId="minmax-buttons" [min]="0"
+          [max]="selectedProductStock" styleClass="w-full" />
+        <div class="flex items-center justify-content-center gap-2 mt-4">
+          <p-button (onClick)="cp1.reject()" label="Cancelar" [text]="true" icon="pi pi-times" size="small"
+            severity="secondary" />
+          <p-button (onClick)="cp1.accept()" [loading]="loading" label="Añadir al carrito" icon="pi pi-shopping-cart"
+            size="small" />
+        </div>
+      </div>
+    </ng-template>
+  </p-confirmPopup>
+  <!-- ------ -->
 </div>

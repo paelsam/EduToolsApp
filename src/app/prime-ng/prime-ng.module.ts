@@ -24,6 +24,9 @@ import { TableModule } from 'primeng/table';
 import { RatingModule } from 'primeng/rating'; 
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { InputOtpModule } from 'primeng/inputotp';
+import { ConfirmPopupModule } from 'primeng/confirmpopup';
+import { InputNumberModule } from 'primeng/inputnumber';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
 
 @NgModule({
   declarations: [],
@@ -52,6 +55,9 @@ import { InputOtpModule } from 'primeng/inputotp';
     MenuModule,
     ProgressSpinnerModule,
     InputOtpModule,
+    ConfirmPopupModule,
+    InputNumberModule,
+    ConfirmDialogModule,
   ],
 })
 export class PrimeNgModule {}

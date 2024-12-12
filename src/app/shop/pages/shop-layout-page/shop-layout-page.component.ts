@@ -7,9 +7,7 @@ import { LayoutService } from '../../../shared/services/layout.service';
   styleUrl: './shop-layout-page.component.scss',
 })
 export class ShopLayoutPageComponent {
-  constructor(private layoutService: LayoutService) {
-    console.log('ShopLayoutPageComponent created');
-  }
+  constructor(private layoutService: LayoutService) {}
 
   get containerClass() {
     return {

@@ -1,16 +1,16 @@
-interface InventoryStatus {
-  label: string;
-  value: string;
-}
+import { InventoryStatus } from "../../shop/interfaces/inventory-status.enum";
+import { Category } from "./category.interface";
+
+
 export interface Product {
-  id?: string;
-  code?: string;
-  name?: string;
+  id?:         number;
+  name:        string;
   description?: string;
-  price?: number;
-  quantity?: number;
+  price:       string;
+  stock?:       string;
+  category?:    Category | number;
+  categoryName?: string;
+  image?:       string;
+  is_favorite?: boolean;
   inventoryStatus?: InventoryStatus;
-  category?: string;
-  image?: string;
-  rating?: number;
 }

@@ -3,7 +3,7 @@ import { MessageService, PrimeNGConfig } from 'primeng/api';
 import { AuthenticationService } from './authentication/services/authentication.service';
 import { getCookie } from '../helpers/cookiesFunctions';
 import { NetworkService } from './shared/services/network.service';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { AuthStatus } from './authentication/interfaces/auth-status.enum';
 import { Roles } from './shared/interfaces/roles.enum';
 
@@ -20,42 +20,8 @@ export class AppComponent implements OnInit {
     private authenticationService: AuthenticationService,
     private networkService: NetworkService,
     private messageService: MessageService,
-    private router: Router
+    private route: ActivatedRoute,
   ) {}
-
-  public finishedAuthCheck = computed<boolean>(() => {
-    if (this.authenticationService.authStatus() === 'checking') {
-      return false;
-    }
-    return true;
-  });
-
-  // public authStatusChangedEffect = effect(() => {
-  //   console.log(this.authenticationService.authStatus());
-
-  //   switch (this.authenticationService.authStatus()) {
-  //     case AuthStatus.checking:
-  //       break;
-  //     case AuthStatus.authenticated:
-  //       console.log('Rol del usuario:', this.authenticationService.role());
-  //       if (
-  //         this.authenticationService.role() === Roles.ADMIN ||
-  //         this.authenticationService.role() === Roles.STAFF
-  //       ) {
-  //         this.router.navigate(['/dashboard']);
-  //       }
-  //       if (this.authenticationService.role() === Roles.CLIENT) {
-  //         //! No necesariamente tiene que ser /store
-  //         //! Arrerglar para que redireccione a la página correcta
-  //         //! En base al las páginas que puede ver el cliente
-  //         this.router.navigate(['/store']);
-  //       }
-  //       break;
-  //     case AuthStatus.notAuthenticated:
-  //       this.router.navigate(['/store']);
-  //       break;
-  //   }
-  // });
 
   ngOnInit() {
     this.primengConfig.ripple = true;
@@ -73,6 +39,16 @@ export class AppComponent implements OnInit {
             ? 'Has recuperado la conexión a internet'
             : 'No tienes conexión a internet',
         });
+      }
+    });
+
+    // Scroll to fragment
+    this.route.fragment.subscribe((fragment) => {
+      if (fragment) {
+        const element = document.getElementById(fragment);
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth' });
+        }
       }
     });
   }
