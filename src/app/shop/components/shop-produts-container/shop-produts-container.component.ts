@@ -1,4 +1,12 @@
-import { Component, effect, OnChanges, OnInit, signal, Signal, SimpleChanges } from '@angular/core';
+import {
+  Component,
+  effect,
+  OnChanges,
+  OnInit,
+  signal,
+  Signal,
+  SimpleChanges,
+} from '@angular/core';
 import { ConfirmationService, MessageService, SelectItem } from 'primeng/api';
 import { DataView } from 'primeng/dataview';
 import { ProductService } from '../../../shared/services/product.service';
@@ -10,6 +18,8 @@ import { AuthStatus } from '../../../authentication/interfaces/auth-status.enum'
 import { DialogService } from '../../../shared/services/dialog.service';
 import { Address } from '../../../shared/interfaces/address.interface';
 import { StateCitiesService } from '../../../shared/services/state-cities.service';
+import { AddressService } from '../../../shared/services/address.service';
+import { PaymentMethod } from '../../../shared/interfaces/payment.interface';
 
 @Component({
   selector: 'shop-produts-container',
@@ -44,6 +54,8 @@ export class ShopProdutsContainerComponent implements OnInit {
   loading: boolean = false;
 
   newAddress: Address = {} as Address;
+  newPaymentMethod: PaymentMethod = {} as PaymentMethod;
+
   public statesOptions: string[] = [];
   public citiesOptions: string[] = [];
 
@@ -54,16 +66,18 @@ export class ShopProdutsContainerComponent implements OnInit {
     private messageService: MessageService,
     private loadingService: LoadingService,
     private dialogService: DialogService,
-    private stateCitiesService: StateCitiesService
+    private stateCitiesService: StateCitiesService,
+    private addressService: AddressService
   ) {}
 
   private user_id = this.authenticationService.user()?.id as number;
 
-
-
   ngOnInit(): void {
-
     this.updateProducts();
+
+    this.updateAddresses();
+
+    this.updatePaymentMethods();
 
     // Getting the states
     this.stateCitiesService.getStates().subscribe((states) => {
@@ -95,9 +109,21 @@ export class ShopProdutsContainerComponent implements OnInit {
     ];
   }
 
+  updateAddresses() {
+    this.addressService.getAddresses().subscribe((addresses) => {
+      this.addresses = addresses;
+    });
+  }
+
   updateProducts() {
     this.productService.getProducts(this.user_id).subscribe((products) => {
       this.products = products;
+    });
+  }
+
+  updatePaymentMethods() {
+    this.productService.getPaymentMethods().subscribe((methods) => {
+      this.paymentMethods = methods;
     });
   }
 
@@ -206,11 +232,45 @@ export class ShopProdutsContainerComponent implements OnInit {
   }
 
   deleteAddress(address: any) {
-    // ! Eliminar dirección
+    this.addressService.deleteAddress(address.id).subscribe(() => {
+      this.messageService.add({
+        severity: 'success',
+        summary: 'Dirección eliminada con éxito',
+      });
+    });
   }
 
   addAddress() {
-    // ! Agregar dirección
+    this.addressService.createAddress(this.newAddress).subscribe((address) => {
+      this.messageService.add({
+        severity: 'success',
+        summary: 'Dirección añadida con éxito',
+      });
+      this.setAddressDialog(false);
+    });
+  }
+
+  addPaymentMethod() {
+    this.productService
+      .createPaymentMethod(this.newPaymentMethod)
+      .subscribe((payment) => {
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Método de pago añadido con éxito',
+        });
+        this.setPaymentDialog(false);
+        this.updatePaymentMethods();
+      });
+  }
+
+  deletePaymentMethod(payment: PaymentMethod) {
+    this.productService.deletePaymentMethod(payment.id).subscribe(() => {
+      this.messageService.add({
+        severity: 'success',
+        summary: 'Método de pago eliminado con éxito',
+      });
+      this.updatePaymentMethods();
+    });
   }
 
   setAddressDialog(open: boolean) {
