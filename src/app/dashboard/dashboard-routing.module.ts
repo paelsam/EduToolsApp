@@ -7,6 +7,7 @@ import { ListUserComponent } from './pages/list-user/list-user.component';
 import { CustomerService } from '../shared/services/customer.service';
 import { ListCategoryComponent } from './pages/list-category/list-category.component';
 import { ListOrderComponent } from './pages/list-order/list-order.component';
+import { GraphicsComponent } from './pages/graphics/graphics.component';
 
 const routes: Routes = [
   {
@@ -17,6 +18,7 @@ const routes: Routes = [
       { path: 'list-user', component: ListUserComponent },
       { path: 'list-category', component: ListCategoryComponent },
       { path: 'list-order', component: ListOrderComponent },
+      { path: 'charts', component: GraphicsComponent }
     ]
   }
 ];

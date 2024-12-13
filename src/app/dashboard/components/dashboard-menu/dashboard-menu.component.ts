@@ -22,6 +22,11 @@ export class DashboardMenuComponent implements OnInit {
         icon: 'pi pi-fw pi-briefcase',
         items: [
           {
+            label: 'Graficas',
+            icon: 'pi pi-fw pi-chart-bar',
+            routerLink: ['/dashboard/charts'],
+          },
+          {
             label: 'Tienda',
             icon: 'pi pi-fw pi-globe',
             routerLink: ['/store'],

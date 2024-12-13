@@ -182,13 +182,17 @@ export class ProductService {
     formData.append('description', category.description);
 
     return this.http
-      .post<Category>(`${this.baseUrl}/api/productmanager/category/`, formData, {
-        withCredentials: true,
-        headers: new HttpHeaders({
-          'X-CSRFToken': this.authenticationService.CSRFToken(),
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
-        }),
-      })
+      .post<Category>(
+        `${this.baseUrl}/api/productmanager/category/`,
+        formData,
+        {
+          withCredentials: true,
+          headers: new HttpHeaders({
+            'X-CSRFToken': this.authenticationService.CSRFToken(),
+            Authorization: `Bearer ${localStorage.getItem('token')}`,
+          }),
+        }
+      )
       .pipe((result) => {
         return result;
       });
@@ -244,7 +248,9 @@ export class ProductService {
       return this.http
         .delete<any>(
           //? Ese 1 puede ser cualquier número, no afecta la petición
-          `${this.baseUrl}/api/productmanager/favoriteproduct/1/?product_id=${product.id}&user_id=${(this.authenticationService.user() as User).id}`,
+          `${this.baseUrl}/api/productmanager/favoriteproduct/1/?product_id=${
+            product.id
+          }&user_id=${(this.authenticationService.user() as User).id}`,
           {
             withCredentials: true,
             headers: new HttpHeaders({
@@ -297,9 +303,9 @@ export class ProductService {
     formData.append('name', product.name);
     formData.append('price', product.price.toString());
     formData.append('stock', (product.stock as string).toString());
-    formData.append('description', (product.description as string));
+    formData.append('description', product.description as string);
     formData.append('category', (product.categoryID as number).toString());
-    if (product.image){
+    if (product.image) {
       formData.append('image', product.image as Blob);
     }
 
@@ -321,7 +327,7 @@ export class ProductService {
     formData.append('name', product.name);
     formData.append('price', product.price.toString());
     formData.append('stock', (product.stock as string).toString());
-    formData.append('description', (product.description as string));
+    formData.append('description', product.description as string);
     formData.append('category', (product.categoryID as number).toString());
     formData.append('id', (product.id as number).toString());
     // formData.append('image', product.image as string);
@@ -365,4 +371,21 @@ export class ProductService {
         return '';
     }
   }
+
+  getProductsSmall() {
+    return this.http
+      .get<any>('assets/demo/data/products-small.json')
+      .toPromise()
+      .then((res) => res.data as Product[])
+      .then((data) => data);
+  }
+
+  getProducts2() {
+    return this.http.get<any>('assets/demo/data/products.json')
+        .toPromise()
+        .then(res => res.data as Product[])
+        .then(data => data);
+}
+
+
 }

@@ -13,6 +13,7 @@ import { ListProductComponent } from './pages/list-product/list-product.componen
 import { ListUserComponent } from './pages/list-user/list-user.component';
 import { ListCategoryComponent } from './pages/list-category/list-category.component';
 import { ListOrderComponent } from './pages/list-order/list-order.component';
+import { GraphicsComponent } from './pages/graphics/graphics.component';
 
 @NgModule({
   declarations: [
@@ -26,6 +27,7 @@ import { ListOrderComponent } from './pages/list-order/list-order.component';
     ListUserComponent,
     ListCategoryComponent,
     ListOrderComponent,
+    GraphicsComponent,
   ],
   imports: [CommonModule, DashboardRoutingModule, PrimeNgModule],
 })

@@ -29,6 +29,7 @@ import { InputNumberModule } from 'primeng/inputnumber';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { InputTextareaModule } from 'primeng/inputtextarea';
 import { DividerModule } from 'primeng/divider';
+import { ChartModule } from 'primeng/chart';
 
 @NgModule({
   declarations: [],
@@ -62,6 +63,7 @@ import { DividerModule } from 'primeng/divider';
     ConfirmDialogModule,
     InputTextareaModule,
     DividerModule,
+    ChartModule,
   ],
 })
 export class PrimeNgModule {}
