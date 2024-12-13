@@ -80,9 +80,10 @@ export class ShopProdutsContainerComponent implements OnInit {
   ngOnInit(): void {
     this.updateProducts();
 
-    this.updateAddresses();
-
-    this.updatePaymentMethods();
+    if (this.authenticationService.user()) {
+      this.updateAddresses();
+      this.updatePaymentMethods();
+    }
 
     // Getting the states
     this.stateCitiesService.getStates().subscribe((states) => {
@@ -235,6 +236,9 @@ export class ShopProdutsContainerComponent implements OnInit {
   }
 
   getFavorites() {
+    if (!this.authenticationService.user()) {
+      return;
+    }
     this.productService.getProducts(this.user_id).subscribe((products) => {
       this.favorites = products.filter((product) => product.is_favorite);
     });
@@ -300,14 +304,15 @@ export class ShopProdutsContainerComponent implements OnInit {
   }
 
   confirmOrder() {
-    this.orderService.createOrder(this.selectedPaymentMethod.id, this.selectedAddress.id).subscribe(() => {
-      this.messageService.add({
-        severity: 'success',
-        summary: 'Orden creada con éxito',
+    this.orderService
+      .createOrder(this.selectedPaymentMethod.id, this.selectedAddress.id)
+      .subscribe(() => {
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Orden creada con éxito',
+        });
+        this.updateProducts();
+        this.dialogService.setOrderDialog(false);
       });
-      this.updateProducts();
-      this.dialogService.setOrderDialog(false);
-    })
-
   }
 }
