@@ -18,7 +18,8 @@ const routes: Routes = [
       { path: 'list-user', component: ListUserComponent },
       { path: 'list-category', component: ListCategoryComponent },
       { path: 'list-order', component: ListOrderComponent },
-      { path: 'charts', component: GraphicsComponent }
+      { path: 'charts', component: GraphicsComponent },
+      { path: '', redirectTo: 'charts', pathMatch: 'full' }
     ]
   }
 ];
