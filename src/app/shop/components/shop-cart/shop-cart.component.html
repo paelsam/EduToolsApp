@@ -10,7 +10,7 @@
       <!-- Mostrar total de todos los productos en el carrito -->
       <div class="flex justify-content-between align-items-center w-full gap-2">
         <span class="text-lg font-semibold text-900">Total: {{ cart.total| currency }}</span>
-        <p-button label="Procesar Pago" [disabled]="!cart.total" icon="pi pi-credit-card" styleClass="p-button-lg"></p-button>
+        <p-button label="Procesar Pago" (onClick)="activateOrderDialog()" [disabled]="!cart.total" icon="pi pi-credit-card" styleClass="p-button-lg"></p-button>
       </div>
       <h5>Productos añadidos:</h5>
       <p-dataView #dv [value]="products" [layout]="layout">

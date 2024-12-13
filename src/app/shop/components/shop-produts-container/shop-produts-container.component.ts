@@ -20,6 +20,7 @@ import { Address } from '../../../shared/interfaces/address.interface';
 import { StateCitiesService } from '../../../shared/services/state-cities.service';
 import { AddressService } from '../../../shared/services/address.service';
 import { PaymentMethod } from '../../../shared/interfaces/payment.interface';
+import { OrderService } from '../../../shared/services/order.service';
 
 @Component({
   selector: 'shop-produts-container',
@@ -44,6 +45,7 @@ export class ShopProdutsContainerComponent implements OnInit {
   displayFavoritesDialog: boolean = false;
   displayOrdersDialog: boolean = false;
   displayConfirmPopup: boolean = false;
+  displayOrderDialog: boolean = false;
 
   displayAddressDialog: boolean = false;
   displayPaymentDialog: boolean = false;
@@ -51,6 +53,8 @@ export class ShopProdutsContainerComponent implements OnInit {
   quantity: number = 1;
   selectedProductName: string = '';
   selectedProductStock: number = 0;
+  selectedAddress: Address = {} as Address;
+  selectedPaymentMethod: PaymentMethod = {} as PaymentMethod;
   loading: boolean = false;
 
   newAddress: Address = {} as Address;
@@ -67,7 +71,8 @@ export class ShopProdutsContainerComponent implements OnInit {
     private loadingService: LoadingService,
     private dialogService: DialogService,
     private stateCitiesService: StateCitiesService,
-    private addressService: AddressService
+    private addressService: AddressService,
+    private orderService: OrderService
   ) {}
 
   private user_id = this.authenticationService.user()?.id as number;
@@ -95,6 +100,10 @@ export class ShopProdutsContainerComponent implements OnInit {
 
     this.dialogService.paymentMethodDialog$.subscribe((open) => {
       this.displayPaymentDialog = open;
+    });
+
+    this.dialogService.orderDialog$.subscribe((open) => {
+      this.displayOrderDialog = open;
     });
 
     this.loadingService.loading$.subscribe((loading) => {
@@ -288,5 +297,17 @@ export class ShopProdutsContainerComponent implements OnInit {
     } else {
       this.displayLoginDialog = true;
     }
+  }
+
+  confirmOrder() {
+    this.orderService.createOrder(this.selectedPaymentMethod.id, this.selectedAddress.id).subscribe(() => {
+      this.messageService.add({
+        severity: 'success',
+        summary: 'Orden creada con éxito',
+      });
+      this.updateProducts();
+      this.dialogService.setOrderDialog(false);
+    })
+
   }
 }

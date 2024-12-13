@@ -15,6 +15,7 @@ import { InventoryStatus } from '../../interfaces/inventory-status.enum';
 import { Cart, ProductElement } from '../../interfaces/cart.interface';
 import { LoadingService } from '../../../shared/services/loading.service';
 import { MessageService } from 'primeng/api';
+import { DialogService } from '../../../shared/services/dialog.service';
 
 @Component({
   selector: 'app-shop-cart',
@@ -41,7 +42,8 @@ export class ShopCartComponent implements OnChanges {
     private productService: ProductService,
     private authenticationService: AuthenticationService,
     private loadingService: LoadingService,
-    private messageService: MessageService
+    private messageService: MessageService,
+    private dialogService: DialogService
   ) {
     this.updateScreenSize();
   }
@@ -118,5 +120,9 @@ export class ShopCartComponent implements OnChanges {
         });
         this.updateCart();
       });
+  }
+
+  activateOrderDialog() {
+    this.dialogService.setOrderDialog(true);
   }
 }
