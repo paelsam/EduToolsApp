@@ -18,6 +18,9 @@ export class DialogService {
   private paymentMethodDialogSubject = new BehaviorSubject<boolean>(false);
   paymentMethodDialog$ = this.paymentMethodDialogSubject.asObservable();
 
+  private orderDialogSubject = new BehaviorSubject<boolean>(false);
+  orderDialog$ = this.orderDialogSubject.asObservable();
+
   // Creamos un método para cambiar el estado del diálogo de dirección
   setDirectionDialog(open: boolean): void {
     this.directionDialogSubject.next(open);
@@ -26,6 +29,11 @@ export class DialogService {
   // Creamos un método para cambiar el estado del diálogo de método de pago
   setPaymentMethodDialog(open: boolean): void {
     this.paymentMethodDialogSubject.next(open);
+  }
+
+  // Creamos un método para cambiar el estado del diálogo de pedido
+  setOrderDialog(open: boolean): void {
+    this.orderDialogSubject.next(open);
   }
 
 }

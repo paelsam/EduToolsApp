@@ -130,7 +130,7 @@
     [resizable]="false" [style]="{width: '500px', height: '500px'}">
     <div class="flex flex-column gap-2">
       <div *ngIf="addresses.length === 0" class="text-center">No tienes direcciones registradas.</div>
-      <div *ngFor="let address of addresses" class="flex gap-2 align-items-center">
+      <div *ngFor="let address of addresses" class="flex gap-2 justify-content-between align-items-center">
         <div class="flex flex-column">
           <div class="font-semibold">{{address.address}}</div>
           <div>{{address.city}}, {{address.state}}</div>
@@ -150,6 +150,66 @@
           [filter]="true"></p-dropdown>
         <p-button styleClass="m-auto" label="Añadir" (onClick)="addAddress()" />
       </div>
+    </div>
+  </p-dialog>
+
+  <!-- p-dialog para métodos de pago -->
+  <p-dialog header="Métodos de Pago" [(visible)]="displayPaymentDialog" [modal]="true" [closable]="true"
+    [resizable]="false" [style]="{width: '450px', height: '400px'}">
+    <div class="flex flex-column gap-2">
+      <div *ngIf="paymentMethods.length === 0" class="text-center">No tienes métodos de pago registrados.</div>
+      <div *ngFor="let paymentMethod of paymentMethods" class="flex gap-2 justify-content-between align-items-center">
+        <div class="flex flex-column">
+          <div class="font-semibold">{{paymentMethod.name}}</div>
+          <div>{{paymentMethod.description}}</div>
+        </div>
+        <p-button icon="pi pi-trash" (onClick)="deletePaymentMethod(paymentMethod)" />
+      </div>
+      <p-divider />
+      <div class="flex flex-column gap-4">
+        <h5 class="font-semibold">Añadir Nuevo Método de Pago</h5>
+        <input type="text" pInputText placeholder="Nombre" [(ngModel)]="newPaymentMethod.name" />
+        <input type="text" pInputText placeholder="Número de Tarjeta" [(ngModel)]="newPaymentMethod.description" />
+        <p-button styleClass="m-auto" label="Añadir" (onClick)="addPaymentMethod()" />
+      </div>
+    </div>
+  </p-dialog>
+
+  <!-- Dialogo que muestra el resumen de la orden y permite al usuario confirmar la compra -->
+  <!-- Muestre dos secciones, una lista de radiobutons con las direcciones disponibles -->
+  <!-- y otra con los métodos de pago -->
+
+  <p-dialog header="Resumen de la Orden y Confirmación" [(visible)]="displayOrderDialog" [modal]="true" [closable]="true"
+    [resizable]="false" [style]="{width: '500px', height: '500px'}">
+    <div class="flex flex-column gap-2">
+      <div class="flex flex-column gap-2">
+        <h5 class="font-semibold">Dirección de Envío</h5>
+        <div class="flex flex-column gap-2">
+          <div *ngIf="addresses.length === 0" class="text-center">No tienes direcciones registradas.</div>
+          <div *ngFor="let address of addresses" class="flex gap-2 justify-content-between align-items-center">
+            <div class="flex flex-column">
+              <div class="font-semibold">{{address.address}}</div>
+              <div>{{address.city}}, {{address.state}}</div>
+            </div>
+            <p-radioButton name="address" [value]="address" [(ngModel)]="selectedAddress" />
+          </div>
+        </div>
+      </div>
+      <p-divider />
+      <div class="flex flex-column gap-2">
+        <h5 class="font-semibold">Método de Pago</h5>
+        <div class="flex flex-column gap-2">
+          <div *ngIf="paymentMethods.length === 0" class="text-center">No tienes métodos de pago registrados. Registra uno para continuar</div>
+          <div *ngFor="let paymentMethod of paymentMethods" class="flex gap-2 justify-content-between align-items-center">
+            <div class="flex flex-column">
+              <div class="font-semibold">{{paymentMethod.name}}</div>
+              <div>{{paymentMethod.description}}</div>
+            </div>
+            <p-radioButton name="paymentMethod" [value]="paymentMethod" [(ngModel)]="selectedPaymentMethod" />
+          </div>
+        </div>
+      </div>
+      <p-button styleClass="mt-4 my-auto" label="Confirmar Compra" (onClick)="confirmOrder()" [disabled]="paymentMethods.length === 0 || addresses.length === 0" />
     </div>
   </p-dialog>
 

@@ -18,7 +18,7 @@
         <p-menu #menu [popup]="true" [model]="menuItems"></p-menu>
         <button class="p-link layout-topbar-button mr-2" (click)="menu.toggle($event)">
           <i class="pi pi-user text-xl md:text-2xl"></i>
-          {{ username | titlecase }}
+          {{ username || 'Invitado' | titlecase  }}
         </button>
       </div>
       <div class=" text-5xl">

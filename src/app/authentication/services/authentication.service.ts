@@ -16,7 +16,7 @@ import { Router } from '@angular/router';
 })
 export class AuthenticationService {
   private readonly baseUrl: string = environment.BACKEND_URL;
-  private _CSRFToken: string = localStorage.getItem('csrftoken') || getCookie('csrftoken')  || '';
+  private _CSRFToken: string = getCookie('csrftoken') || localStorage.getItem('csrftoken')  || '';
 
   private _user = signal<User | null>(null);
   private _role = signal<string | null>(null);

@@ -8,6 +8,7 @@ import { InventoryStatus } from '../../shop/interfaces/inventory-status.enum';
 import { Product } from '../interfaces/product.interface';
 import { Cart } from '../../shop/interfaces/cart.interface';
 import { User } from '../../authentication/interfaces/user.interface';
+import { PaymentMethod } from '../interfaces/payment.interface';
 
 @Injectable()
 export class ProductService {
@@ -336,6 +337,57 @@ export class ProductService {
       .patch<Product>(
         `${this.baseUrl}/api/productmanager/product/${product.id}/`,
         formData,
+        {
+          withCredentials: true,
+          headers: new HttpHeaders({
+            'X-CSRFToken': this.authenticationService.CSRFToken(),
+            Authorization: `Bearer ${localStorage.getItem('token')}`,
+          }),
+        }
+      )
+      .pipe((result) => {
+        return result;
+      });
+  }
+
+  // Payment methods
+
+  getPaymentMethods() {
+    return this.http
+      .get<PaymentMethod[]>(`${this.baseUrl}/api/cart/payment-methods/`, {
+        withCredentials: true,
+        headers: new HttpHeaders({
+          'X-CSRFToken': this.authenticationService.CSRFToken(),
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
+        }),
+      })
+      .pipe((methods) => {
+        return methods;
+      });
+  }
+
+  createPaymentMethod(method: PaymentMethod) {
+    const formData = new FormData();
+    formData.append('name', method.name);
+    formData.append('description', method.description);
+
+    return this.http
+      .post(`${this.baseUrl}/api/cart/payment-methods/`, formData, {
+        withCredentials: true,
+        headers: new HttpHeaders({
+          'X-CSRFToken': this.authenticationService.CSRFToken(),
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
+        }),
+      })
+      .pipe((result) => {
+        return result;
+      });
+  }
+
+  deletePaymentMethod(id: number) {
+    return this.http
+      .delete<{ details: string }>(
+        `${this.baseUrl}/api/cart/payment-methods/${id}/`,
         {
           withCredentials: true,
           headers: new HttpHeaders({
