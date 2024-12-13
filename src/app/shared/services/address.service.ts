@@ -39,7 +39,7 @@ export class AddressService {
     return this.http.delete(`${this.baseUrl}/api/user/addresses/${id}/`, {
       headers: new HttpHeaders({
         'X-CSRFToken': this.authenticationService.CSRFToken(),
-        Authorization: `Token ${localStorage.getItem('token')}`,
+        Authorization: `Bearer ${localStorage.getItem('token')}`,
       }),
     });
   }

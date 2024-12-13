@@ -250,6 +250,7 @@ export class ShopProdutsContainerComponent implements OnInit {
         severity: 'success',
         summary: 'Dirección eliminada con éxito',
       });
+      this.updateAddresses();
     });
   }
 
