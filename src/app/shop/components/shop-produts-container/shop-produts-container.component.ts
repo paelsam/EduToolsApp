@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, effect, OnChanges, OnInit, signal, Signal, SimpleChanges } from '@angular/core';
 import { ConfirmationService, MessageService, SelectItem } from 'primeng/api';
 import { DataView } from 'primeng/dataview';
 import { ProductService } from '../../../shared/services/product.service';
@@ -7,8 +7,9 @@ import { Product } from '../../../shared/interfaces/product.interface';
 import { InventoryStatus } from '../../interfaces/inventory-status.enum';
 import { LoadingService } from '../../../shared/services/loading.service';
 import { AuthStatus } from '../../../authentication/interfaces/auth-status.enum';
-import { environment } from '../../../../environments/environment';
-
+import { DialogService } from '../../../shared/services/dialog.service';
+import { Address } from '../../../shared/interfaces/address.interface';
+import { StateCitiesService } from '../../../shared/services/state-cities.service';
 
 @Component({
   selector: 'shop-produts-container',
@@ -16,9 +17,10 @@ import { environment } from '../../../../environments/environment';
   styleUrl: './shop-produts-container.component.scss',
 })
 export class ShopProdutsContainerComponent implements OnInit {
-  public backendUrl = environment.BACKEND_URL;
-
   products: Product[] = [];
+  favorites: Product[] = [];
+  addresses: Address[] = [];
+  paymentMethods: any[] = [];
 
   sortOptions: SelectItem[] = [];
 
@@ -29,25 +31,57 @@ export class ShopProdutsContainerComponent implements OnInit {
   inventoryStatus = InventoryStatus;
 
   displayLoginDialog: boolean = false;
+  displayFavoritesDialog: boolean = false;
+  displayOrdersDialog: boolean = false;
   displayConfirmPopup: boolean = false;
+
+  displayAddressDialog: boolean = false;
+  displayPaymentDialog: boolean = false;
 
   quantity: number = 1;
   selectedProductName: string = '';
   selectedProductStock: number = 0;
   loading: boolean = false;
 
+  newAddress: Address = {} as Address;
+  public statesOptions: string[] = [];
+  public citiesOptions: string[] = [];
+
   constructor(
     private productService: ProductService,
     private authenticationService: AuthenticationService,
     private confirmationService: ConfirmationService,
     private messageService: MessageService,
-    private loadingService: LoadingService
+    private loadingService: LoadingService,
+    private dialogService: DialogService,
+    private stateCitiesService: StateCitiesService
   ) {}
 
   private user_id = this.authenticationService.user()?.id as number;
 
+
+
   ngOnInit(): void {
+
     this.updateProducts();
+
+    // Getting the states
+    this.stateCitiesService.getStates().subscribe((states) => {
+      this.statesOptions = states;
+    });
+
+    // Getting the cities
+    this.stateCitiesService.getCities().subscribe((cities) => {
+      this.citiesOptions = cities;
+    });
+
+    this.dialogService.directionDialog$.subscribe((open) => {
+      this.displayAddressDialog = open;
+    });
+
+    this.dialogService.paymentMethodDialog$.subscribe((open) => {
+      this.displayPaymentDialog = open;
+    });
 
     this.loadingService.loading$.subscribe((loading) => {
       this.loading = loading;
@@ -113,6 +147,7 @@ export class ShopProdutsContainerComponent implements OnInit {
           });
         }
         this.loadingService.setLoading(false);
+        this.getFavorites();
         this.updateProducts();
       });
     } else {
@@ -138,7 +173,9 @@ export class ShopProdutsContainerComponent implements OnInit {
   }
 
   openConfirmPopup(event: Event, product: Product) {
-    if (this.authenticationService.authStatus() === AuthStatus.notAuthenticated) {
+    if (
+      this.authenticationService.authStatus() === AuthStatus.notAuthenticated
+    ) {
       this.displayLoginDialog = true;
       return;
     }
@@ -156,5 +193,40 @@ export class ShopProdutsContainerComponent implements OnInit {
         this.confirmationService.close();
       },
     });
+  }
+
+  openOrders() {
+    // ! Crear otro dialogo para mostrar las ordenes
+  }
+
+  getFavorites() {
+    this.productService.getProducts(this.user_id).subscribe((products) => {
+      this.favorites = products.filter((product) => product.is_favorite);
+    });
+  }
+
+  deleteAddress(address: any) {
+    // ! Eliminar dirección
+  }
+
+  addAddress() {
+    // ! Agregar dirección
+  }
+
+  setAddressDialog(open: boolean) {
+    this.dialogService.setDirectionDialog(open);
+  }
+
+  setPaymentDialog(open: boolean) {
+    this.dialogService.setPaymentMethodDialog(open);
+  }
+
+  openFavorites() {
+    if (this.authenticationService.user()) {
+      this.getFavorites();
+      this.displayFavoritesDialog = true;
+    } else {
+      this.displayLoginDialog = true;
+    }
   }
 }

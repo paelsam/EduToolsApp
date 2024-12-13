@@ -4,8 +4,8 @@ import { ProductService } from '../../../shared/services/product.service';
 import { Table } from 'primeng/table';
 import { MessageService } from 'primeng/api';
 import { AuthenticationService } from '../../../authentication/services/authentication.service';
-import { environment } from '../../../../environments/environment';
 import { InventoryStatus } from '../../../shop/interfaces/inventory-status.enum';
+import { Category } from '../../../shared/interfaces/category.interface';
 
 @Component({
   selector: 'app-list-product',
@@ -21,7 +21,11 @@ export class ListProductComponent implements OnInit {
 
   products: Product[] = [];
 
+  categories: Category[] = [];
+
   product: Product = {} as Product;
+  productImage: string = '';
+  createProduct: boolean = false;
 
   selectedProducts: Product[] = [];
 
@@ -33,8 +37,6 @@ export class ListProductComponent implements OnInit {
 
   rowsPerPageOptions = [5, 10, 20];
 
-  baseUrl: string = environment.BACKEND_URL;
-
   constructor(
     private productService: ProductService,
     private messageService: MessageService,
@@ -43,12 +45,16 @@ export class ListProductComponent implements OnInit {
 
   private user_id = this.authenticationService.user()?.id as number;
 
+  public isUploadingImage: boolean = false;
+
   ngOnInit() {
     this.updateProducts();
 
     this.cols = [
       { field: 'id', header: 'ID' },
       { field: 'product', header: 'Producto' },
+      { field: 'name', header: 'Nombre' },
+      { field: 'image', header: 'Imagen' },
       { field: 'price', header: 'Precio' },
       { field: 'categoryName', header: 'Categoria' },
       { field: 'inventoryStatus', header: 'Estado' },
@@ -57,8 +63,15 @@ export class ListProductComponent implements OnInit {
     this.statuses = [
       { label: InventoryStatus.EN_STOCK, value: InventoryStatus.EN_STOCK },
       { label: InventoryStatus.BAJO_STOCK, value: InventoryStatus.BAJO_STOCK },
-      { label: InventoryStatus.FUERA_DE_STOCK, value: InventoryStatus.FUERA_DE_STOCK },
+      {
+        label: InventoryStatus.FUERA_DE_STOCK,
+        value: InventoryStatus.FUERA_DE_STOCK,
+      },
     ];
+
+    this.productService.getCategories().subscribe((categories) => {
+      this.categories = categories;
+    });
   }
 
   updateProducts() {
@@ -75,6 +88,7 @@ export class ListProductComponent implements OnInit {
     this.product = {} as Product;
     this.submitted = false;
     this.productDialog = true;
+    this.createProduct = true;
   }
 
   deleteSelectedProducts() {
@@ -91,29 +105,22 @@ export class ListProductComponent implements OnInit {
     this.product = { ...product };
   }
 
-  confirmDeleteSelected() {
-    this.deleteProductsDialog = false;
-    this.products = this.products.filter(
-      (val) => !this.selectedProducts.includes(val)
-    );
-    this.messageService.add({
-      severity: 'success',
-      summary: 'Successful',
-      detail: 'Products Deleted',
-      life: 3000,
-    });
-    this.selectedProducts = [];
-  }
-
   confirmDelete() {
     this.deleteProductDialog = false;
 
-    this.messageService.add({
-      severity: 'success',
-      summary: 'Successful',
-      detail: 'Product Deleted',
-      life: 3000,
-    });
+    this.productService
+      .deleteProduct(this.product.id as number)
+      .subscribe(() => {
+        this.updateProducts();
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Éxito',
+          detail: `Producto eliminado con éxito!`,
+          life: 3000,
+        });
+        this.product = {} as Product;
+      });
+
     this.product = {} as Product;
   }
 
@@ -122,22 +129,36 @@ export class ListProductComponent implements OnInit {
     this.submitted = false;
   }
 
-  saveProduct() {
+  saveProduct(option?: 'create' | 'edit') {
     this.submitted = true;
 
-    if (this.product.name?.trim()) {
-      if (this.product.id) {
-        this.productService.editProduct(this.product).subscribe((product) => {
-          this.messageService.add({
-            severity: 'success',
-            summary: 'Successful',
-            detail: 'Product Updated',
-            life: 3000,
-          });
+    if (this.createProduct) {
+      this.productService.createProduct(this.product).subscribe((product) => {
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Exitoso',
+          detail: 'Producto creado exitosamente!',
+          life: 3000,
         });
+        this.createProduct = false;
+        this.updateProducts();
+      });
+    } else {
+      if (this.product.name?.trim()) {
+        if (this.product.id) {
+          this.productService.editProduct(this.product).subscribe((product) => {
+            this.messageService.add({
+              severity: 'success',
+              summary: 'Exitoso',
+              detail: 'Producto editado exitosamente!',
+              life: 3000,
+            });
+            this.updateProducts();
+          });
+        }
       }
 
-      this.updateProducts();
+      this.isUploadingImage = false;
       this.productDialog = false;
       this.product = {} as Product;
     }
@@ -145,5 +166,16 @@ export class ListProductComponent implements OnInit {
 
   onGlobalFilter(table: Table, event: Event) {
     table.filterGlobal((event.target as HTMLInputElement).value, 'contains');
+  }
+
+  onUpload(event: any) {
+    // Variable to know if the image is being uploaded
+    this.isUploadingImage = true;
+
+    // SHOW IMAGE IN THE IMG TAG
+    const image = event.files[0].objectURL.changingThisBreaksApplicationSecurity;
+
+
+    this.product.image = event.files[0];
   }
 }

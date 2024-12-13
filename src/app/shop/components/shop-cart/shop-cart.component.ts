@@ -15,7 +15,6 @@ import { InventoryStatus } from '../../interfaces/inventory-status.enum';
 import { Cart, ProductElement } from '../../interfaces/cart.interface';
 import { LoadingService } from '../../../shared/services/loading.service';
 import { MessageService } from 'primeng/api';
-import { environment } from '../../../../environments/environment';
 
 @Component({
   selector: 'app-shop-cart',
@@ -26,8 +25,6 @@ export class ShopCartComponent implements OnChanges {
   @Input() isVisible: boolean = false;
   @Input() isMobile: boolean = false;
   @Output() isVisibleChange = new EventEmitter<boolean>();
-
-  baseUrl = environment.BACKEND_URL;
 
   layout: 'list' | 'grid' = 'list';
 
@@ -56,6 +53,8 @@ export class ShopCartComponent implements OnChanges {
   }
 
   ngOnInit() {
+    console.log('uSER ROLE', this.authenticationService.user()?.role);
+
     if (this.authenticationService.authStatus() === AuthStatus.authenticated) {
       this.updateCart();
     }

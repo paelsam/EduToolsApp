@@ -1,5 +1,25 @@
 <div class="container py-8 px-4 lg:px-0" id="shop-products">
-  <h3>Productos Universitarios</h3>
+  <div class="flex justify-content-between align-items-center mb-5">
+    <h3 class="m-0">Productos Universitarios</h3>
+    <div class="flex align-items-center justify-content-center ">
+      <!-- Historial de Ordenes -->
+      <div class=" text-5xl mx-3">
+        <button class="p-link layout-topbar-button  ml-2" (click)="openOrders()">
+          <i class="pi pi-list text-xl md:text-2xl"></i>
+          <span class="ml-2">Órdenes</span>
+        </button>
+      </div>
+      <!-- Lista de productos favoritos -->
+      <div class=" text-5xl mx-3">
+        <button class="p-link layout-topbar-button  ml-2" (click)="openFavorites()">
+          <i class="pi pi-heart text-xl md:text-2xl"></i>
+          <span class="ml-2">Favoritos</span>
+        </button>
+      </div>
+    </div>
+
+
+  </div>
   <p-dataView #dv [value]="products" [paginator]="true" [rows]="9" filterBy="name,categoryName" [sortField]="sortField"
     [sortOrder]="sortOrder" layout="grid">
     <ng-template pTemplate="header">
@@ -16,8 +36,7 @@
     <ng-template let-products pTemplate="listItem">
       <div class="col-12" *ngFor="let product of products">
         <div class="flex flex-column md:flex-row align-items-center p-3 w-full">
-          <img [src]="backendUrl + product.image" [alt]="product.name"
-            class="my-4 md:my-0 w-9 md:w-10rem shadow-2 mr-5" />
+          <img [src]="product.image" [alt]="product.name" class="my-4 md:my-0 w-9 md:w-10rem shadow-2 mr-5" />
           <div class="flex-1 flex flex-column align-items-center text-center md:text-left">
             <div class="font-bold text-2xl">{{product.name}}</div>
             <div class="mb-2">{{product.description}}</div>
@@ -55,7 +74,7 @@
                 [class]="'product-badge ' + getStatusClass(product.inventoryStatus)">{{product.inventoryStatus}}</span>
             </div>
             <div class="flex flex-column align-items-center text-center mb-3 gap-2">
-              <img [src]="backendUrl + '/' + product.image" [alt]="product.name" class="w-9 shadow-2 my-3 mx-0" />
+              <img [src]="product.image" [alt]="product.name" class="w-9 shadow-2 my-3 mx-0" />
               <div class="text-2xl font-bold" style="max-height: 6rem;">{{product.name}}</div>
               <div class="flex align-items-center mb-3" style="min-height: 5rem;">{{product.description}}</div>
             </div>
@@ -83,6 +102,55 @@
     <p-footer>
       <p-button label="Aceptar" (onClick)="displayLoginDialog = false"></p-button>
     </p-footer>
+  </p-dialog>
+
+  <!-- Dialog con el listado de productos favoritos -->
+  <p-dialog header="Productos Favoritos" [(visible)]="displayFavoritesDialog" [modal]="true" [closable]="true"
+    [resizable]="false" [style]="{width: '450px'}">
+    <div class="flex flex-column gap-2">
+      <div *ngIf="favorites.length === 0" class="text-center">No tienes productos favoritos.</div>
+      <div *ngFor="let favorite of favorites" class="flex gap-2 align-items-center">
+        <img [src]="favorite.image" [alt]="favorite.name" class="w-9" />
+        <div class="flex flex-column">
+          <div class="font-semibold">{{favorite.name}}</div>
+          <div>{{favorite.description}}</div>
+        </div>
+        <p-button icon="pi pi-shopping-cart" (onClick)="openConfirmPopup($event, favorite)"
+          [disabled]="favorite.inventoryStatus === inventoryStatus.FUERA_DE_STOCK"></p-button>
+        <p-button icon="pi pi-trash" (onClick)="addToFavorites(favorite)" />
+      </div>
+    </div>
+    <p-footer>
+      <p-button label="Cerrar" (onClick)="displayFavoritesDialog = false"></p-button>
+    </p-footer>
+  </p-dialog>
+
+  <!-- Dialogo que muestra la lista de direcciones de un cliente y un formulario para añadir una nueva -->
+  <p-dialog header="Direcciones de Envío" [(visible)]="displayAddressDialog" [modal]="true" [closable]="true"
+    [resizable]="false" [style]="{width: '500px', height: '500px'}">
+    <div class="flex flex-column gap-2">
+      <div *ngIf="addresses.length === 0" class="text-center">No tienes direcciones registradas.</div>
+      <div *ngFor="let address of addresses" class="flex gap-2 align-items-center">
+        <div class="flex flex-column">
+          <div class="font-semibold">{{address.address}}</div>
+          <div>{{address.city}}, {{address.state}}</div>
+        </div>
+        <p-button icon="pi pi-trash" (onClick)="deleteAddress(address)" />
+      </div>
+      <p-divider />
+      <div class="flex flex-column gap-4">
+        <h5 class="font-semibold">Añadir Nueva Dirección</h5>
+        <input type="text" pInputText placeholder="Dirección" [(ngModel)]="newAddress.address" />
+        <p-dropdown id="state" [(ngModel)]="newAddress.state" [loading]="!statesOptions.length" [options]="statesOptions"
+          placeholder="Selecciona un departamento" pInputText class="block" inputStyleClass="w-full" styleClass="w-full"
+          [filter]="true"></p-dropdown>
+
+          <p-dropdown id="city" [(ngModel)]="newAddress.city"  [options]="citiesOptions"
+          placeholder="Selecciona una ciudad" pInputText class="block" inputStyleClass="w-full" styleClass="w-full"
+          [filter]="true"></p-dropdown>
+        <p-button styleClass="m-auto" label="Añadir" (onClick)="addAddress()" />
+      </div>
+    </div>
   </p-dialog>
 
   <!-- Confirm Popup component con input number en el cual se pueda seleccionar la cantidad de producto que se quiera-->

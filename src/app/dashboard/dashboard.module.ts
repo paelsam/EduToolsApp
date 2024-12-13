@@ -11,6 +11,8 @@ import { DashboardSidebarComponent } from './components/dashboard-sidebar/dashbo
 import { PrimeNgModule } from '../prime-ng/prime-ng.module';
 import { ListProductComponent } from './pages/list-product/list-product.component';
 import { ListUserComponent } from './pages/list-user/list-user.component';
+import { ListCategoryComponent } from './pages/list-category/list-category.component';
+import { ListOrderComponent } from './pages/list-order/list-order.component';
 
 @NgModule({
   declarations: [
@@ -21,7 +23,9 @@ import { ListUserComponent } from './pages/list-user/list-user.component';
     DashboardLayoutComponent,
     DashboardSidebarComponent,
     ListProductComponent,
-    ListUserComponent
+    ListUserComponent,
+    ListCategoryComponent,
+    ListOrderComponent,
   ],
   imports: [CommonModule, DashboardRoutingModule, PrimeNgModule],
 })

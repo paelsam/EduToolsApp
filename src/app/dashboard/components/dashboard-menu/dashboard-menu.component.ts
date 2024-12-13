@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { LayoutService } from '../../../shared/services/layout.service';
+import { AuthenticationService } from '../../../authentication/services/authentication.service';
 
 @Component({
   selector: 'dashboard-menu',
@@ -10,45 +11,20 @@ export class DashboardMenuComponent implements OnInit {
 
   model: any[] = [];
 
-  constructor(public layoutService: LayoutService) {}
+  constructor(
+    public layoutService: LayoutService,
+    private authenticationService: AuthenticationService) {}
 
   ngOnInit() {
     this.model = [
       {
-        label: 'Home',
-        items: [
-          { label: 'Dashboard', icon: 'pi pi-fw pi-home', routerLink: ['/'] },
-        ],
-      },
-      {
-        label: 'Administración',
+        label: `Rol: ${this.authenticationService.user()?.role}`,
         icon: 'pi pi-fw pi-briefcase',
         items: [
           {
-            label: 'Landing',
+            label: 'Tienda',
             icon: 'pi pi-fw pi-globe',
-            routerLink: ['/landing'],
-          },
-          {
-            label: 'Auth',
-            icon: 'pi pi-fw pi-user',
-            items: [
-              {
-                label: 'Login',
-                icon: 'pi pi-fw pi-sign-in',
-                routerLink: ['/auth/login'],
-              },
-              {
-                label: 'Error',
-                icon: 'pi pi-fw pi-times-circle',
-                routerLink: ['/auth/error'],
-              },
-              {
-                label: 'Access Denied',
-                icon: 'pi pi-fw pi-lock',
-                routerLink: ['/auth/access'],
-              },
-            ],
+            routerLink: ['/store'],
           },
           {
             label: 'Productos',
@@ -56,19 +32,21 @@ export class DashboardMenuComponent implements OnInit {
             routerLink: ['/dashboard/list-product'],
           },
           {
-            label: 'User',
-            icon: 'pi pi-fw pi-calendar',
+            label: 'Usuarios',
+            icon: 'pi pi-fw pi-user',
             routerLink: ['/dashboard/list-user'],
           },
+          // Boton de categorias
           {
-            label: 'Not Found',
-            icon: 'pi pi-fw pi-exclamation-circle',
-            routerLink: ['/notfound'],
+            label: 'Categorias',
+            icon: 'pi pi-fw pi-tags',
+            routerLink: ['/dashboard/list-category'],
           },
+          // Boton de ordenes
           {
-            label: 'Empty',
-            icon: 'pi pi-fw pi-circle-off',
-            routerLink: ['/pages/empty'],
+            label: 'Ordenes',
+            icon: 'pi pi-fw pi-shopping-cart',
+            routerLink: ['/dashboard/list-order'],
           },
         ],
       },

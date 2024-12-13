@@ -40,4 +40,18 @@ export class StateCitiesService {
       );
   }
 
+  getCities(): Observable<string[]> {
+    let cities: string[] = [];
+    return this.http
+      .get<DepartamentoConMunicipios[]>('../../../assets/data/statesCities.json')
+      .pipe(
+        map((data: DepartamentoConMunicipios[]) => {
+          data.forEach((stateData) => {
+            cities.push(stateData.municipio);
+          });
+          return cities;
+        })
+      );
+  }
+
 }

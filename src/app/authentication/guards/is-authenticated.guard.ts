@@ -11,8 +11,6 @@ export const isAuthenticatedGuard: CanActivateFn = (route, state) => {
   const authenticationService = inject(AuthenticationService);
   const router = inject(Router);
 
-  console.log('isAuthenticatedGuard');
-
   // Si está autenticado, redirigir a la página de inicio de la tienda, o bien puede acceder a la
   // dashboard si es un usuario administrador o staff (asesor)
   if (authenticationService.authStatus() === AuthStatus.authenticated) {

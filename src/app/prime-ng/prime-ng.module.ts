@@ -27,7 +27,8 @@ import { InputOtpModule } from 'primeng/inputotp';
 import { ConfirmPopupModule } from 'primeng/confirmpopup';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
-import { InputTextarea, InputTextareaModule } from 'primeng/inputtextarea';
+import { InputTextareaModule } from 'primeng/inputtextarea';
+import { DividerModule } from 'primeng/divider';
 
 @NgModule({
   declarations: [],
@@ -60,6 +61,7 @@ import { InputTextarea, InputTextareaModule } from 'primeng/inputtextarea';
     InputNumberModule,
     ConfirmDialogModule,
     InputTextareaModule,
+    DividerModule,
   ],
 })
 export class PrimeNgModule {}

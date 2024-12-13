@@ -1,0 +1,90 @@
+<div class="p-grid">
+  <div class="p-col-12">
+    <div class="card px-6 py-6">
+      <p-toolbar styleClass="mb-4">
+        <ng-template pTemplate="left">
+          <div class="my-2">
+            <button pButton pRipple label="Nuevo" icon="pi pi-plus" class="p-button-success mr-2"
+              (click)="openNew()"></button>
+          </div>
+        </ng-template>
+
+        <ng-template pTemplate="right">
+          <button pButton pRipple label="Exportar a CSV" icon="pi pi-upload" class="p-button-help"
+            (click)="dt3.exportCSV()"></button>
+        </ng-template>
+      </p-toolbar>
+
+      <p-table #dt3 [value]="categories" [columns]="cols" responsiveLayout="scroll" [rows]="5"
+        [globalFilterFields]="['id','name', 'description']" [paginator]="true" [rowsPerPageOptions]="[5,10,20,50]"
+        [showCurrentPageReport]="true"
+        currentPageReportTemplate="Mostrando de {first} hasta el {last} de {totalRecords} registros"
+        selectionMode="single" [rowHover]="true" dataKey="id">
+        <ng-template pTemplate="caption">
+          <div class="flex flex-column md:flex-row md:justify-content-between md:align-items-center">
+            <h5 class="m-0">Manejo de Categorías</h5>
+            <span class="block mt-2 md:mt-0 p-input-icon-left">
+              <i class="pi pi-search"></i>
+              <input pInputText type="text" (input)="onGlobalFilter(dt3, $event)" placeholder="Buscar por palabra clave"
+                class="w-full sm:w-auto" />
+            </span>
+          </div>
+        </ng-template>
+        <ng-template pTemplate="header">
+          <tr>
+            <th pSortableColumn="id">ID <p-sortIcon field="id"></p-sortIcon></th>
+            <th pSortableColumn="name">Nombre <p-sortIcon field="name"></p-sortIcon></th>
+            <th pSortableColumn="description">Descripción <p-sortIcon field="description"></p-sortIcon></th>
+            <th></th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-category>
+          <tr>
+            <td><span class="p-column-title">ID</span>
+              {{category.id}}
+            </td>
+            <td>
+              <span class="p-column-title">Nombre de la Categoría</span>
+              {{category.name}}
+            </td>
+            <td>
+              <span class="p-column-title">Descripción</span>
+              {{category.description}}
+            </td>
+            <td>
+              <div class="flex">
+                <button pButton pRipple icon="pi pi-pencil" class="p-button-rounded p-button-success mr-2"
+                  (click)="editCategory(category)"></button>
+                <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-warning"
+                  (click)="deleteCategory(category)"></button>
+              </div>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
+
+    <p-dialog [(visible)]="categoryDialog" [style]="{width: '450px'}" header="Detalles de la categoría" [modal]="true"
+      class="p-fluid">
+      <ng-template pTemplate="content">
+        <!-- Nombre de la categoria -->
+        <div class="field">
+          <label for="name">Nombre de la categoría</label>
+          <input type="text" pInputText id="name" [(ngModel)]="category.name" required autofocus
+            [ngClass]="{'ng-invalid ng-dirty' : submitted && !category.name}" />
+          <small class="ng-dirty ng-invalid" *ngIf="submitted && !category.name">Name is required.</small>
+        </div>
+        <!-- Descripción de la categoria -->
+        <div class="field">
+          <label for="description">Descripción</label>
+          <input type="text" pInputText id="description" [(ngModel)]="category.description" required autofocus
+            [ngClass]="{'ng-invalid ng-dirty' : submitted && !category.description}" />
+        </div>
+      </ng-template>
+      <ng-template pTemplate="footer">
+        <button type="button" pButton label="Cancelar" class="p-button-text" (click)="hideDialog()"></button>
+        <button type="button" pButton label="Guardar" class="p-button-success" (click)="saveCategory()"></button>
+      </ng-template>
+    </p-dialog>
+  </div>
+</div>

@@ -16,7 +16,7 @@ import { Router } from '@angular/router';
 })
 export class AuthenticationService {
   private readonly baseUrl: string = environment.BACKEND_URL;
-  private _CSRFToken: string = getCookie('csrftoken') || '';
+  private _CSRFToken: string = localStorage.getItem('csrftoken') || getCookie('csrftoken')  || '';
 
   private _user = signal<User | null>(null);
   private _role = signal<string | null>(null);
@@ -44,6 +44,7 @@ export class AuthenticationService {
       })
       .subscribe((response) => {
         this._CSRFToken = response.csrfToken;
+        localStorage.setItem('csrftoken', response.csrfToken);
       });
   }
 
@@ -114,7 +115,11 @@ export class AuthenticationService {
       .pipe(
         map((response: LoginResponse) => {
           localStorage.setItem('token', response.token);
-          this.setAuthentication({...response.user, role: determinateRole(response.user)});
+          if (!determinateRole(response.user)) {
+            this.logout();
+            return false;
+          }
+          this.setAuthentication({...response.user, role: determinateRole(response.user) as string});
           return true;
         })
       );
@@ -122,6 +127,7 @@ export class AuthenticationService {
 
   public logout() {
     localStorage.removeItem('token');
+    localStorage.removeItem('csrftoken');
     this._user.set(null);
     this._role.set(null);
     this._authStatus.set(AuthStatus.notAuthenticated);
@@ -136,7 +142,7 @@ export class AuthenticationService {
     }
 
     return this.http
-      .get<User>(`${this.baseUrl}/api/user/`, {
+      .get<User>(`${this.baseUrl}/api/user/verify-jwt/`, {
         withCredentials: true,
         headers: new HttpHeaders({
           'X-CSRFToken': this._CSRFToken,
@@ -145,7 +151,11 @@ export class AuthenticationService {
       })
       .pipe(
         map((response) => {
-          this.setAuthentication({...response, role: determinateRole(response)});
+          if (!determinateRole(response)) {
+            this.logout();
+            return false;
+          }
+          this.setAuthentication({...response, role: determinateRole(response) as string});
           return true;
         })
       );

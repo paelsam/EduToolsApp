@@ -47,15 +47,37 @@ export class ProductService {
               this.getCategoryName(product.category).subscribe((category) => {
                 product.category = category;
                 product.categoryName = category.name;
+                product.categoryID = category.id;
               });
             }
             product.inventoryStatus = this.determinateStockStatus(
               parseInt(product.stock as string)
             );
           });
+          console.log(products);
           return products;
         })
       );
+  }
+
+  getProduct(id: number): Observable<Product> {
+    const headers: HttpHeaders = new HttpHeaders({
+      'X-CSRFToken': this.authenticationService.CSRFToken(),
+      Authorization: `Bearer ${localStorage.getItem('token')}`,
+    });
+
+    return this.http
+      .get<Product>(`${this.baseUrl}/api/productmanager/product/${id}/`, {
+        withCredentials: true,
+        headers: this.authenticationService.user()
+          ? headers
+          : new HttpHeaders({
+              'X-CSRFToken': this.authenticationService.CSRFToken(),
+            }),
+      })
+      .pipe((product) => {
+        return product;
+      });
   }
 
   deleteProductCart(id: number) {
@@ -97,6 +119,78 @@ export class ProductService {
       })
       .pipe((category) => {
         return category;
+      });
+  }
+
+  getCategories(): Observable<Category[]> {
+    return this.http
+      .get<Category[]>(`${this.baseUrl}/api/productmanager/category/`, {
+        withCredentials: true,
+        headers: new HttpHeaders({
+          'X-CSRFToken': this.authenticationService.CSRFToken(),
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
+        }),
+      })
+      .pipe((categories) => {
+        return categories;
+      });
+  }
+
+  editCategory(category: Category) {
+    const formData = new FormData();
+    formData.append('name', category.name);
+    formData.append('description', category.description);
+    formData.append('id', category.id.toString());
+
+    return this.http
+      .patch<Category>(
+        `${this.baseUrl}/api/productmanager/category/${category.id}/`,
+        formData,
+        {
+          withCredentials: true,
+          headers: new HttpHeaders({
+            'X-CSRFToken': this.authenticationService.CSRFToken(),
+            Authorization: `Bearer ${localStorage.getItem('token')}`,
+          }),
+        }
+      )
+      .pipe((result) => {
+        return result;
+      });
+  }
+
+  deleteCategory(id: number) {
+    return this.http
+      .delete<{ details: string }>(
+        `${this.baseUrl}/api/productmanager/category/${id}/`,
+        {
+          withCredentials: true,
+          headers: new HttpHeaders({
+            'X-CSRFToken': this.authenticationService.CSRFToken(),
+            Authorization: `Bearer ${localStorage.getItem('token')}`,
+          }),
+        }
+      )
+      .pipe((result) => {
+        return result;
+      });
+  }
+
+  createCategory(category: Category) {
+    const formData = new FormData();
+    formData.append('name', category.name);
+    formData.append('description', category.description);
+
+    return this.http
+      .post<Category>(`${this.baseUrl}/api/productmanager/category/`, formData, {
+        withCredentials: true,
+        headers: new HttpHeaders({
+          'X-CSRFToken': this.authenticationService.CSRFToken(),
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
+        }),
+      })
+      .pipe((result) => {
+        return result;
       });
   }
 
@@ -198,13 +292,37 @@ export class ProductService {
       });
   }
 
+  createProduct(product: Product) {
+    const formData = new FormData();
+    formData.append('name', product.name);
+    formData.append('price', product.price.toString());
+    formData.append('stock', (product.stock as string).toString());
+    formData.append('description', (product.description as string));
+    formData.append('category', (product.categoryID as number).toString());
+    if (product.image){
+      formData.append('image', product.image as Blob);
+    }
+
+    return this.http
+      .post<Product>(`${this.baseUrl}/api/productmanager/product/`, formData, {
+        withCredentials: true,
+        headers: new HttpHeaders({
+          'X-CSRFToken': this.authenticationService.CSRFToken(),
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
+        }),
+      })
+      .pipe((result) => {
+        return result;
+      });
+  }
+
   editProduct(product: Product) {
     const formData = new FormData();
     formData.append('name', product.name);
     formData.append('price', product.price.toString());
     formData.append('stock', (product.stock as string).toString());
     formData.append('description', (product.description as string));
-    formData.append('category', (product.category as number).toString());
+    formData.append('category', (product.categoryID as number).toString());
     formData.append('id', (product.id as number).toString());
     // formData.append('image', product.image as string);
 
@@ -229,7 +347,7 @@ export class ProductService {
     if (stock === 0) {
       return InventoryStatus.FUERA_DE_STOCK;
     }
-    if (stock < 5) {
+    if (stock < 10) {
       return InventoryStatus.BAJO_STOCK;
     }
     return InventoryStatus.EN_STOCK;

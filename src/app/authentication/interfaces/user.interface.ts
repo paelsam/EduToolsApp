@@ -2,6 +2,7 @@ export interface User {
   first_name: string;
   last_name: string;
   username: string;
+  user?: string;
   email: string;
   password: string;
   is_staff: boolean;

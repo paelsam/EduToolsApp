@@ -10,7 +10,8 @@ export interface Product {
   stock?:       string;
   category:    Category | number;
   categoryName?: string;
-  image?:       string;
+  categoryID?: number;
+  image?:       string | Blob | any;
   is_favorite?: boolean;
   inventoryStatus: InventoryStatus;
 }

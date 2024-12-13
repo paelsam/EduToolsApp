@@ -5,6 +5,8 @@ import { ListProductComponent } from './pages/list-product/list-product.componen
 import { ProductService } from '../shared/services/product.service';
 import { ListUserComponent } from './pages/list-user/list-user.component';
 import { CustomerService } from '../shared/services/customer.service';
+import { ListCategoryComponent } from './pages/list-category/list-category.component';
+import { ListOrderComponent } from './pages/list-order/list-order.component';
 
 const routes: Routes = [
   {
@@ -13,6 +15,8 @@ const routes: Routes = [
     children: [
       { path: 'list-product', component: ListProductComponent },
       { path: 'list-user', component: ListUserComponent },
+      { path: 'list-category', component: ListCategoryComponent },
+      { path: 'list-order', component: ListOrderComponent },
     ]
   }
 ];

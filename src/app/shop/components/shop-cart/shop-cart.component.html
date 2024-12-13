@@ -21,7 +21,7 @@
                 [ngClass]="{ 'border-top-1 surface-border': !first }">
                 <div class="image-container">
                   <img class="image" style="max-width: 8rem; max-height: 8rem;"
-                    [src]="baseUrl + '/' + item.product_image" [alt]="item.product_name" />
+                    [src]="item.product_image" [alt]="item.product_name" />
                   <p-tag [value]="item.inventoryStatus" [severity]="getSeverity(item)" class="absolute"
                     [style.left.px]="4" [style.top.px]="4" />
                 </div>
@@ -51,7 +51,7 @@
                 <div class="surface-50 flex justify-content-center border-round p-3">
                   <div class="relative mx-auto">
                     <img class="border-round w-full"
-                      [src]="baseUrl + '/' + product.product_image"
+                      [src]="product.product_image"
                       [alt]="product.product_name" style="max-width: 300px;" />
                     <p-tag [value]="product.inventoryStatus" [severity]="getSeverity(product)"></p-tag>
                   </div>
@@ -83,7 +83,7 @@
     </ng-template>
     <div class="flex flex-column align-items-center justify-content-center p-4 h-full">
       <p>Por favor, inicie sesión para ver su carrito de compras.</p>
-      <p-button label="Iniciar Sesión" routerLink="/auth" icon="pi pi-sign-in" class="w-full"
+      <p-button label="Iniciar Sesión" routerLink="/auth" icon="pi pi-sign-in" styleClass="w-full"
         styleClass="p-button-lg"></p-button>
     </div>
   </ng-template>

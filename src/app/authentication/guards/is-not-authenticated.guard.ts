@@ -10,12 +10,9 @@ export const isNotAuthenticatedGuard: CanActivateFn = (route, state) => {
   const authenticationService = inject(AuthenticationService);
   const router = inject(Router);
 
-  console.log('isNotAuthenticatedGuard');
-
   // Si no está autenticado, solo puede acceder a la páginas de auth y a la página de inicio de la tienda
   if (authenticationService.authStatus() === AuthStatus.notAuthenticated) {
     // También funcione para la página de verificación de correo
-    console.log('No autenticado');
 
     if (
       state.url === '/store' ||
